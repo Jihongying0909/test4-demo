@@ -17,7 +17,7 @@ export default function ComparePanel({ brute, top, bottom }: { brute?: Step[]; t
   const rows = [row('Brute Force', brute), row('Top-Down DP', top), row('Bottom-Up DP', bottom)];
 
   return (
-    <div className="warm-card p-4 overflow-auto">
+    <div className="warm-card p-4 overflow-auto w-full h-full">
       <div className="text-lg font-semibold soft-title mb-2">算法对比面板</div>
       <table className="w-full text-xs">
         <thead>

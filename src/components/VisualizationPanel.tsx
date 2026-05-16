@@ -75,9 +75,12 @@ export default function VisualizationPanel({ step, tab, setTab, totalFloors }: {
     <div className="warm-card rounded-2xl p-4 h-[620px] overflow-auto relative">
       <div className="absolute inset-0 pointer-events-none opacity-30" style={{ backgroundImage: 'radial-gradient(#e8e3f6 0.8px, transparent 0.8px)', backgroundSize: '14px 14px' }} />
       <div className="relative z-10">
-        <FormulaCard step={step} />
-        <BranchCompare step={step} />
-        <FloorRangeBar step={step} totalFloors={totalFloors} />
+        <div className="warm-subcard p-3 mb-3 min-h-[240px]">
+          <div className="text-lg font-semibold soft-title mb-2">分支决策观察板</div>
+          <FormulaCard step={step} />
+          <BranchCompare step={step} />
+          <FloorRangeBar step={step} totalFloors={totalFloors} />
+        </div>
         {step.algorithm === 'bruteforce' && <BruteForceTree step={step} />}
         {step.algorithm === 'topdown' && <TopDownMemoView step={step} />}
         {step.algorithm === 'bottomup' && <BottomUpTableView step={step} tab={tab} setTab={setTab} />}

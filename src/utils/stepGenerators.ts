@@ -16,6 +16,7 @@ export function generateBruteForceSteps(K: number, N: number): Step[] {
   const edges: TreeEdge[] = [];
 
   const push = (s: Partial<Step> & Pick<Step, 'pseudoLine' | 'description' | 'action' | 'currentState'>) => {
+    logs.push(`Step ${steps.length + 2}: ${s.description}`);
     steps.push({
       id: steps.length + 1,
       algorithm: 'bruteforce',
@@ -110,6 +111,7 @@ export function generateTopDownSteps(K: number, N: number): Step[] {
   let hits = 0;
 
   const push = (s: Partial<Step> & Pick<Step, 'pseudoLine' | 'description' | 'action' | 'currentState'>) => {
+    logs.push(`Step ${steps.length + 2}: ${s.description}`);
     const memoObj: Step['memo'] = {};
     memo.forEach((v, k) => {
       memoObj[k] = { trials: v.trials, floor: v.floor, status: 'new' };
@@ -205,6 +207,7 @@ export function generateBottomUpSteps(K: number, N: number): Step[] {
   let filled = 0;
 
   const push = (s: Partial<Step> & Pick<Step, 'pseudoLine' | 'description' | 'action' | 'currentState'>) => {
+    logs.push(`Step ${steps.length + 2}: ${s.description}`);
     steps.push({
       id: steps.length + 1,
       algorithm: 'bottomup',
@@ -271,6 +274,7 @@ export function generateReachDpSteps(K: number, N: number): Step[] {
   let m = 0;
 
   const push = (desc: string, k?: number) => {
+    logs.push(`Step ${steps.length + 2}: ${desc}`);
     steps.push({
       id: steps.length + 1,
       algorithm: 'reach',

@@ -11,7 +11,7 @@ export default function HeatmapView({ heat }: { heat?: number[][] }) {
   };
 
   return (
-    <div className="warm-card p-4 bg-[#FFFDF9]">
+    <div className="warm-card p-4 bg-[#FFFDF9] w-full h-full">
       <div className="text-lg font-semibold soft-title mb-2">状态访问热力图</div>
       <div className="text-xs soft-sub mb-2">纵轴是 Eggs(K)，横轴是 Floors(N)</div>
 
