@@ -59,14 +59,21 @@ export default function App() {
       alert('当前规模过大，建议使用较小参数进行可视化演示。');
       return;
     }
-    const generated = algorithm === 'bruteforce' ? generateBruteForceSteps(k, n) : algorithm === 'topdown' ? generateTopDownSteps(k, n) : algorithm === 'bottomup' ? generateBottomUpSteps(k, n) : generateReachDpSteps(k, n);
+    const generated = algorithm === 'bruteforce'
+      ? generateBruteForceSteps(k, n)
+      : algorithm === 'topdown'
+        ? generateTopDownSteps(k, n)
+        : algorithm === 'bottomup'
+          ? generateBottomUpSteps(k, n)
+          : generateReachDpSteps(k, n);
+
     setSteps(generated);
     setIdx(0);
     setStatus('Ready');
   };
 
   return (
-    <div className="min-h-screen p-4 lg:p-6 bg-page text-textMain">
+    <div className="min-h-screen p-4 lg:p-7 bg-[#F8F4EE] text-[#4B3A2F]">
       <ControlPanel
         k={k}
         n={n}
@@ -87,19 +94,27 @@ export default function App() {
         onReset={() => { setStatus('Ready'); setIdx(0); }}
       />
 
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 mt-4">
-        <div className="xl:col-span-3"><PseudocodePanel lines={pseudoMap[algorithm === 'reach' ? 'bottomup' : algorithm]} current={current?.pseudoLine ?? 0} visited={visited} /></div>
-        <div className="xl:col-span-6"><VisualizationPanel step={current} tab={tab} setTab={setTab} /></div>
-        <div className="xl:col-span-3 space-y-3"><StateMonitor step={current} /><CallStackPanel stack={current?.callStack} /><Legend /></div>
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 mt-5">
+        <div className="xl:col-span-3">
+          <PseudocodePanel lines={pseudoMap[algorithm === 'reach' ? 'bottomup' : algorithm]} current={current?.pseudoLine ?? 0} visited={visited} />
+        </div>
+        <div className="xl:col-span-6">
+          <VisualizationPanel step={current} tab={tab} setTab={setTab} />
+        </div>
+        <div className="xl:col-span-3 space-y-4">
+          <StateMonitor step={current} />
+          <CallStackPanel stack={current?.callStack} />
+          <Legend />
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 mt-4">
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 mt-5">
         <div className="xl:col-span-5"><StepExplanation step={current} /></div>
         <div className="xl:col-span-4"><ExecutionLog logs={current?.logs} /></div>
         <div className="xl:col-span-3"><HeatmapView heat={current?.heatmap} /></div>
       </div>
 
-      <div className="mt-4"><ComparePanel brute={allCompare.brute} top={allCompare.top} bottom={allCompare.bottom} /></div>
+      <div className="mt-5"><ComparePanel brute={allCompare.brute} top={allCompare.top} bottom={allCompare.bottom} /></div>
     </div>
   );
 }

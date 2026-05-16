@@ -2,7 +2,6 @@ import { Step } from '../types';
 
 export default function ComparePanel({ brute, top, bottom }: { brute?: Step[]; top?: Step[]; bottom?: Step[] }) {
   const last = (s?: Step[]) => (s && s.length > 0 ? s[s.length - 1] : undefined);
-
   const row = (name: string, s?: Step[]) => {
     const l = last(s);
     return {
@@ -15,26 +14,26 @@ export default function ComparePanel({ brute, top, bottom }: { brute?: Step[]; t
     };
   };
 
-  const rows = [row('Brute', brute), row('TopDown', top), row('BottomUp', bottom)];
+  const rows = [row('Brute Force', brute), row('Top-Down DP', top), row('Bottom-Up DP', bottom)];
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-4 overflow-auto">
-      <div className="text-sm text-textSub mb-2">算法对比</div>
+    <div className="warm-card p-4 overflow-auto">
+      <div className="text-sm text-[#7C6A5D] mb-2">算法对比面板</div>
       <table className="w-full text-xs">
         <thead>
-          <tr>
-            <th>算法</th>
-            <th>最少次数</th>
-            <th>首投</th>
-            <th>调用</th>
-            <th>命中</th>
-            <th>状态</th>
+          <tr className="text-[#7C6A5D]">
+            <th className="text-left py-2">算法</th>
+            <th className="text-left">最少次数</th>
+            <th className="text-left">首投楼层</th>
+            <th className="text-left">调用次数</th>
+            <th className="text-left">缓存命中</th>
+            <th className="text-left">状态数量</th>
           </tr>
         </thead>
         <tbody>
           {rows.map((r) => (
-            <tr key={r.name}>
-              <td>{r.name}</td>
+            <tr key={r.name} className="border-t border-[#E7D9C8] text-[#4B3A2F]">
+              <td className="py-2">{r.name}</td>
               <td>{r.trials}</td>
               <td>{r.floor}</td>
               <td>{r.calls}</td>

@@ -4,15 +4,30 @@
 
 :root {
   font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
-  color: #0f172a;
-  background: #f5f7fb;
+  color: #4B3A2F;
+  background: #F8F4EE;
 }
 
 body {
   margin: 0;
-  background: radial-gradient(circle at top right, #e0f2fe, #f5f7fb 30%), #f5f7fb;
+  background:
+    radial-gradient(circle at 12% 10%, rgba(246, 200, 168, 0.22), transparent 38%),
+    radial-gradient(circle at 92% 2%, rgba(232, 180, 184, 0.14), transparent 30%),
+    #F8F4EE;
+  color: #4B3A2F;
 }
 
-* {
-  box-sizing: border-box;
+* { box-sizing: border-box; }
+
+.warm-card {
+  background: #FFFDF9;
+  border: 1px solid #E7D9C8;
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px rgba(154, 107, 74, 0.10);
+}
+
+.warm-subcard {
+  background: #FFF8F0;
+  border: 1px solid #EAD9C7;
+  border-radius: 0.9rem;
 }
