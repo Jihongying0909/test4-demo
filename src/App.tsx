@@ -101,20 +101,20 @@ export default function App() {
 
       <TeachingContent step={current} algorithm={algorithm} />
 
-      <div className="grid grid-cols-1 xl:grid-cols-20 gap-3 mt-3 items-stretch">
-        <div className="xl:col-span-6 h-full">
+      <div className="grid grid-cols-1 xl:grid-cols-20 gap-3 mt-3 mb-4 items-start">
+        <div className="xl:col-span-6">
           <PseudocodePanel lines={pseudoMap[linesKey]} current={current?.pseudoLine ?? 0} visited={visited} />
         </div>
-        <div className="xl:col-span-9 h-full">
+        <div className="xl:col-span-9">
           <VisualizationPanel step={current} tab={tab} setTab={setTab} totalFloors={n} />
         </div>
-        <div className="xl:col-span-5 space-y-3 h-full">
+        <div className="xl:col-span-5 flex flex-col gap-3">
           <StateMonitor step={current} />
           <CallStackPanel stack={current?.callStack} />
         </div>
       </div>
 
-      <div className="warm-card mt-3 p-4 w-full">
+      <div className="warm-card mt-4 p-4 w-full relative">
         <div className="text-lg font-semibold soft-title mb-3">步骤信息</div>
         <div className="flex items-center gap-2 mb-3">
           <button onClick={() => setBottomTab('explain')} className={`px-3 py-1.5 text-sm rounded-xl border ${bottomTab === 'explain' ? 'soft-purple' : 'bg-[#fcfbff] border-[#e9e4f8]'}`}>当前解释</button>
