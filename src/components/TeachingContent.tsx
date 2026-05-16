@@ -28,8 +28,8 @@ export default function TeachingContent({ step, algorithm }: { step?: Step; algo
   const formula = formulaByAlgo(algorithm);
 
   return (
-    <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 mt-3">
-      <div className="warm-card p-4">
+    <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 mt-3 w-full">
+      <div className="warm-card p-4 w-full h-full">
         <div className="flex items-center gap-2 soft-title text-lg font-semibold mb-2">
           <BookOpen size={18} />
           问题背景说明
@@ -44,7 +44,7 @@ export default function TeachingContent({ step, algorithm }: { step?: Step; algo
         </div>
       </div>
 
-      <div className="warm-card p-4">
+      <div className="warm-card p-4 w-full h-full">
         <div className="flex items-center gap-2 soft-title text-lg font-semibold mb-2">
           <Sigma size={18} />
           核心递推公式
@@ -60,7 +60,7 @@ export default function TeachingContent({ step, algorithm }: { step?: Step; algo
         </div>
       </div>
 
-      <div className="warm-card p-4">
+      <div className="warm-card p-4 w-full h-full">
         <div className="flex items-center gap-2 soft-title text-lg font-semibold mb-2">
           <BarChart3 size={18} />
           三种算法对比说明
@@ -84,7 +84,7 @@ export default function TeachingContent({ step, algorithm }: { step?: Step; algo
         </div>
       </div>
 
-      <div className="warm-card p-4">
+      <div className="warm-card p-4 w-full h-full">
         <div className="soft-title text-lg font-semibold mb-2">重复子问题观察区</div>
         <div className="grid grid-cols-2 gap-2 text-xs">
           <div className="warm-subcard p-2">总调用次数<div className="text-lg font-semibold">{m.calls}</div></div>
@@ -95,7 +95,7 @@ export default function TeachingContent({ step, algorithm }: { step?: Step; algo
         </div>
       </div>
 
-      <div className="warm-card p-4">
+      <div className="warm-card p-4 w-full h-full">
         <div className="flex items-center gap-2 soft-title text-lg font-semibold mb-2">
           <FlaskConical size={18} />
           实验结果与最大规模
@@ -108,7 +108,7 @@ export default function TeachingContent({ step, algorithm }: { step?: Step; algo
         </div>
       </div>
 
-      <div className="warm-card p-4">
+      <div className="warm-card p-4 w-full h-full">
         <div className="soft-title text-lg font-semibold mb-2">学习小结</div>
         <ul className="text-sm leading-7 text-[#5a5075] list-disc pl-4">
           <li>蛮力法重复子问题严重。</li>

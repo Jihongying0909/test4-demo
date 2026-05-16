@@ -114,7 +114,7 @@ export default function App() {
         </div>
       </div>
 
-      <div className="warm-card mt-3 p-4">
+      <div className="warm-card mt-3 p-4 w-full">
         <div className="text-lg font-semibold soft-title mb-3">步骤信息</div>
         <div className="flex items-center gap-2 mb-3">
           <button onClick={() => setBottomTab('explain')} className={`px-3 py-1.5 text-sm rounded-xl border ${bottomTab === 'explain' ? 'soft-purple' : 'bg-[#fcfbff] border-[#e9e4f8]'}`}>当前解释</button>
@@ -139,7 +139,7 @@ export default function App() {
         <div className="xl:col-span-8 h-full"><ComparePanel brute={allCompare.brute} top={allCompare.top} bottom={allCompare.bottom} /></div>
       </div>
 
-      <div className="mt-3">
+      <div className="mt-3 w-full">
         <RuntimeCharts steps={steps} currentIndex={idx} />
       </div>
     </div>

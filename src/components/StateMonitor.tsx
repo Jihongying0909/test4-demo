@@ -6,7 +6,7 @@ export default function StateMonitor({ step }: { step?: Step }) {
   if (!step) return <div className="warm-card p-4 text-[#7C6A5D]">等待运行数据。</div>;
 
   return (
-    <div className="warm-card p-4">
+    <div className="warm-card p-4 w-full h-full">
       <div className="flex items-center gap-2 text-lg font-semibold soft-title mb-2">
         <Gauge size={18} />
         状态监控

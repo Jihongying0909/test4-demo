@@ -1,7 +1,10 @@
 import { Step } from '../types';
+import ReachArrayView from './ReachArrayView';
 
 export default function BottomUpTableView({ step, tab, setTab }: { step: Step; tab: 'table' | 'reach'; setTab: (v: 'table' | 'reach') => void }) {
   const dp = step.dpTable ?? [];
+  const fallbackReach = Array.from({ length: Math.max(2, step.currentState.eggs + 1) }, () => 0);
+  const reachLikeStep: Step = { ...step, reach: step.reach ?? fallbackReach, best: step.best ?? 0 };
 
   return (
     <div>
@@ -67,9 +70,7 @@ export default function BottomUpTableView({ step, tab, setTab }: { step: Step; t
           </div>
         </>
       ) : (
-        <div className="text-sm text-[#7C6A5D] warm-subcard p-4">
-          Reach 一维优化正在下方数组区域实时更新：每轮 m 对 k 从大到小更新。
-        </div>
+        <ReachArrayView step={reachLikeStep} compact />
       )}
     </div>
   );

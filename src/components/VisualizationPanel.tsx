@@ -71,21 +71,36 @@ function FloorRangeBar({ step, totalFloors }: { step: Step; totalFloors: number 
 export default function VisualizationPanel({ step, tab, setTab, totalFloors }: { step?: Step; tab: 'table' | 'reach'; setTab: (v: 'table' | 'reach') => void; totalFloors: number }) {
   if (!step) return <div className="warm-card rounded-2xl p-4 h-[920px]">点击 Start 开始生成可视化。</div>;
 
+  const reachPanelStep: Step = {
+    ...step,
+    reach: step.reach ?? Array.from({ length: Math.max(2, step.currentState.eggs + 1) }, () => 0),
+    best: step.best ?? 0,
+  };
+
   return (
     <div className="warm-card rounded-2xl p-4 h-[920px] overflow-hidden relative w-full">
       <div className="absolute inset-0 pointer-events-none opacity-30" style={{ backgroundImage: 'radial-gradient(#e8e3f6 0.8px, transparent 0.8px)', backgroundSize: '14px 14px' }} />
       <div className="relative z-10 h-full flex flex-col gap-3">
-        <div className="warm-subcard p-3 min-h-[260px]">
+        <div className="warm-subcard p-3 min-h-[260px] w-full">
           <div className="text-lg font-semibold soft-title mb-2">分支决策观察板</div>
           <FormulaCard step={step} />
           <BranchCompare step={step} />
           <FloorRangeBar step={step} totalFloors={totalFloors} />
         </div>
-        <div className="flex-1 min-h-0">
+        <div className="flex-1 min-h-0 w-full">
           {step.algorithm === 'bruteforce' && <BruteForceTree step={step} />}
           {step.algorithm === 'topdown' && <TopDownMemoView step={step} />}
           {step.algorithm === 'bottomup' && <BottomUpTableView step={step} tab={tab} setTab={setTab} />}
-          {step.algorithm === 'reach' && <ReachArrayView step={step} />}
+          {step.algorithm === 'reach' && (
+            <div>
+              <div className="text-lg font-semibold soft-title mb-2">动态规划过程</div>
+              <div className="warm-subcard p-3 mb-3 text-xs text-[#5a5075] leading-6">
+                <div className="font-mono">reach[k] = reach[k] + reach[k-1] + 1</div>
+                <div className="mt-1">每轮投掷次数 m 增加 1，按 k 从大到小更新。</div>
+              </div>
+              <ReachArrayView step={reachPanelStep} />
+            </div>
+          )}
         </div>
       </div>
     </div>

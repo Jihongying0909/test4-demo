@@ -7,7 +7,7 @@ function toNum(v: unknown) {
 export default function RuntimeCharts({ steps, currentIndex }: { steps: Step[]; currentIndex: number }) {
   if (!steps.length) {
     return (
-      <div className="warm-card p-4">
+      <div className="warm-card p-4 w-full">
         <div className="text-lg font-semibold soft-title mb-1">实时结果图表</div>
         <div className="text-sm soft-sub">开始运行后，这里会实时更新调用次数、命中次数、重复次数曲线。</div>
       </div>
@@ -39,7 +39,7 @@ export default function RuntimeCharts({ steps, currentIndex }: { steps: Step[]; 
   const repeatRate = last.calls > 0 ? ((last.repeat / last.calls) * 100).toFixed(1) : '0.0';
 
   return (
-    <div className="warm-card p-4">
+    <div className="warm-card p-4 w-full">
       <div className="flex items-center justify-between mb-2">
         <div className="text-lg font-semibold soft-title">实时结果图表（运行中自动更新）</div>
         <div className="text-xs soft-sub">Step {currentIndex + 1} / {steps.length}</div>

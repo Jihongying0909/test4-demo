@@ -2,7 +2,7 @@ import { Layers3 } from 'lucide-react';
 
 export default function CallStackPanel({ stack = [] }: { stack?: string[] }) {
   return (
-    <div className="warm-card p-4">
+    <div className="warm-card p-4 w-full">
       <div className="flex items-center gap-2 text-lg font-semibold soft-title mb-2">
         <Layers3 size={18} />
         调用栈
