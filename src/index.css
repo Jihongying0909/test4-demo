@@ -4,30 +4,37 @@
 
 :root {
   font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
-  color: #4B3A2F;
-  background: #F8F4EE;
+  color: #43385a;
+  background: #f7f5ff;
 }
 
 body {
   margin: 0;
   background:
-    radial-gradient(circle at 12% 10%, rgba(246, 200, 168, 0.22), transparent 38%),
-    radial-gradient(circle at 92% 2%, rgba(232, 180, 184, 0.14), transparent 30%),
-    #F8F4EE;
-  color: #4B3A2F;
+    radial-gradient(circle at 12% 8%, rgba(251, 207, 232, 0.35), transparent 35%),
+    radial-gradient(circle at 88% 5%, rgba(191, 219, 254, 0.35), transparent 32%),
+    radial-gradient(circle at 65% 90%, rgba(221, 214, 254, 0.25), transparent 32%),
+    #f7f5ff;
+  color: #43385a;
 }
 
 * { box-sizing: border-box; }
 
 .warm-card {
-  background: #FFFDF9;
-  border: 1px solid #E7D9C8;
+  background: #ffffffd9;
+  border: 1px solid #e8e3f6;
   border-radius: 1rem;
-  box-shadow: 0 10px 30px rgba(154, 107, 74, 0.10);
+  box-shadow: 0 10px 24px rgba(114, 102, 158, 0.12);
 }
 
 .warm-subcard {
-  background: #FFF8F0;
-  border: 1px solid #EAD9C7;
-  border-radius: 0.9rem;
+  background: #fcfbff;
+  border: 1px solid #e9e4f8;
+  border-radius: 0.85rem;
 }
+
+.soft-title { color: #4b3f68; }
+.soft-sub { color: #7a6f98; }
+.soft-pink { background: #fce7f3; border-color: #f5cfe4; color: #8a4f73; }
+.soft-blue { background: #e8f2ff; border-color: #cfe0ff; color: #44638f; }
+.soft-purple { background: #efe9ff; border-color: #ddd0ff; color: #5f4c95; }

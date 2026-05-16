@@ -9,6 +9,7 @@ import CallStackPanel from './components/CallStackPanel';
 import HeatmapView from './components/HeatmapView';
 import ComparePanel from './components/ComparePanel';
 import Legend from './components/Legend';
+import TeachingContent from './components/TeachingContent';
 import { pseudoMap } from './data/pseudocode';
 import { Step } from './types';
 import { generateBottomUpSteps, generateBruteForceSteps, generateReachDpSteps, generateTopDownSteps } from './utils/stepGenerators';
@@ -74,7 +75,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen p-3 lg:p-4 bg-[#F8F4EE] text-[#4B3A2F]">
+    <div className="min-h-screen p-3 lg:p-4 bg-[#f7f5ff] text-[#43385a]">
       <ControlPanel
         k={k}
         n={n}
@@ -95,14 +96,16 @@ export default function App() {
         onReset={() => { setStatus('Ready'); setIdx(0); }}
       />
 
-      <div className="grid grid-cols-1 xl:grid-cols-20 gap-3 mt-3">
-        <div className="xl:col-span-6">
+      <TeachingContent step={current} n={n} />
+
+      <div className="grid grid-cols-1 xl:grid-cols-20 gap-3 mt-3 items-stretch">
+        <div className="xl:col-span-6 h-full">
           <PseudocodePanel lines={pseudoMap[algorithm === 'reach' ? 'bottomup' : algorithm]} current={current?.pseudoLine ?? 0} visited={visited} />
         </div>
-        <div className="xl:col-span-9">
-          <VisualizationPanel step={current} tab={tab} setTab={setTab} />
+        <div className="xl:col-span-9 h-full">
+          <VisualizationPanel step={current} tab={tab} setTab={setTab} totalFloors={n} />
         </div>
-        <div className="xl:col-span-5 space-y-3">
+        <div className="xl:col-span-5 h-full grid grid-rows-3 gap-3">
           <StateMonitor step={current} />
           <CallStackPanel stack={current?.callStack} />
           <Legend />
@@ -111,26 +114,26 @@ export default function App() {
 
       <div className="warm-card mt-3 p-4">
         <div className="flex items-center gap-2 mb-3">
-          <button onClick={() => setBottomTab('explain')} className={`px-3 py-1.5 text-sm rounded-xl border ${bottomTab === 'explain' ? 'bg-[#FCE7C8] border-[#D97706]' : 'bg-[#FFF8F0] border-[#E7D9C8]'}`}>当前步骤解释</button>
-          <button onClick={() => setBottomTab('log')} className={`px-3 py-1.5 text-sm rounded-xl border ${bottomTab === 'log' ? 'bg-[#FCE7C8] border-[#D97706]' : 'bg-[#FFF8F0] border-[#E7D9C8]'}`}>运行日志</button>
-          <button onClick={() => setBottomTab('complexity')} className={`px-3 py-1.5 text-sm rounded-xl border ${bottomTab === 'complexity' ? 'bg-[#FCE7C8] border-[#D97706]' : 'bg-[#FFF8F0] border-[#E7D9C8]'}`}>复杂度说明</button>
+          <button onClick={() => setBottomTab('explain')} className={`px-3 py-1.5 text-sm rounded-xl border ${bottomTab === 'explain' ? 'soft-purple' : 'bg-[#fcfbff] border-[#e9e4f8]'}`}>当前步骤解释</button>
+          <button onClick={() => setBottomTab('log')} className={`px-3 py-1.5 text-sm rounded-xl border ${bottomTab === 'log' ? 'soft-blue' : 'bg-[#fcfbff] border-[#e9e4f8]'}`}>运行日志</button>
+          <button onClick={() => setBottomTab('complexity')} className={`px-3 py-1.5 text-sm rounded-xl border ${bottomTab === 'complexity' ? 'soft-pink' : 'bg-[#fcfbff] border-[#e9e4f8]'}`}>复杂度说明</button>
         </div>
 
         {bottomTab === 'explain' && <StepExplanation step={current} />}
         {bottomTab === 'log' && <ExecutionLog logs={current?.logs} />}
         {bottomTab === 'complexity' && (
-          <div className="warm-subcard p-4 text-sm leading-7 text-[#5B4739]">
-            <div>蛮力法：时间复杂度约 O(N^(K-2) * 2^N)，重复子问题多。</div>
-            <div>自顶向下 DP：时间 O(KN²)，空间 O(KN)，递归 + 缓存。</div>
-            <div>自底向上 DP：时间 O(KN²)，空间 O(KN)，填表稳定。</div>
+          <div className="warm-subcard p-4 text-sm leading-7 text-[#5c5077]">
+            <div>蛮力法：时间复杂度约 O(N^(K-2) * 2^N)。</div>
+            <div>自顶向下 DP：时间 O(KN²)，空间 O(KN)。</div>
+            <div>自底向上 DP：时间 O(KN²)，空间 O(KN)。</div>
             <div>一维优化：reach[k] = reach[k] + reach[k-1] + 1。</div>
           </div>
         )}
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-3 mt-3">
-        <div className="xl:col-span-4"><HeatmapView heat={current?.heatmap} /></div>
-        <div className="xl:col-span-8"><ComparePanel brute={allCompare.brute} top={allCompare.top} bottom={allCompare.bottom} /></div>
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-3 mt-3 items-stretch">
+        <div className="xl:col-span-4 h-full"><HeatmapView heat={current?.heatmap} /></div>
+        <div className="xl:col-span-8 h-full"><ComparePanel brute={allCompare.brute} top={allCompare.top} bottom={allCompare.bottom} /></div>
       </div>
     </div>
   );
