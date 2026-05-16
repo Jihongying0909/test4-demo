@@ -1,4 +1,4 @@
-import { Play, Pause, RotateCcw, SkipBack, SkipForward, Rocket } from 'lucide-react';
+﻿import { Play, Pause, RotateCcw, SkipBack, SkipForward, Rocket } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { AlgoType } from '../types';
 
@@ -9,8 +9,6 @@ interface Props {
   setN: (v: number) => void;
   algorithm: AlgoType;
   setAlgorithm: (v: AlgoType) => void;
-  speed: number;
-  setSpeed: (v: number) => void;
   step: number;
   total: number;
   status: string;
@@ -42,6 +40,7 @@ export default function ControlPanel(p: Props) {
       </div>
 
       <div className="warm-card rounded-3xl p-4">
+        <div className="text-sm font-semibold soft-title mb-3">控制面板</div>
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-3 items-end">
           <label className="text-xs soft-sub xl:col-span-2">Eggs
             <input type="number" value={p.k} min={1} onChange={(e) => p.setK(Number(e.target.value))} className={`${inputCls} w-full mt-1`} />
@@ -60,13 +59,7 @@ export default function ControlPanel(p: Props) {
             </select>
           </label>
 
-          <label className="text-xs soft-sub xl:col-span-1">Speed
-            <select value={p.speed} onChange={(e) => p.setSpeed(Number(e.target.value))} className={`${inputCls} w-full mt-1`}>
-              <option value={2000}>0.5x</option><option value={1000}>1x</option><option value={500}>2x</option>
-            </select>
-          </label>
-
-          <div className="xl:col-span-4 flex flex-wrap gap-2 xl:justify-end">
+          <div className="xl:col-span-5 flex flex-wrap gap-2 xl:justify-end">
             <motion.button whileHover={{ scale: 1.03 }} className={`${baseBtn} border-[#d8ccff] bg-gradient-to-r from-[#c4b5fd] to-[#93c5fd] text-[#2f2550]`} onClick={p.onStart}><Rocket size={13} className="inline mr-1" />Start</motion.button>
             <button className={`${baseBtn} border-[#d6d7ff] bg-[#eef2ff] text-[#4b4f8c]`} onClick={p.onPrev}><SkipBack size={13} className="inline mr-1" />Prev</button>
             <button className={`${baseBtn} border-[#d6d7ff] bg-[#eef2ff] text-[#4b4f8c]`} onClick={p.onNext}><SkipForward size={13} className="inline mr-1" />Next</button>
