@@ -1,5 +1,5 @@
-import { Step, AlgoType } from '../types';
-import { BookOpen, Sigma, FlaskConical, BarChart3 } from 'lucide-react';
+import { AlgoType, Step } from '../types';
+import { BarChart3, BookOpen, FlaskConical, Sigma } from 'lucide-react';
 
 function metric(step?: Step) {
   const calls = step?.metrics?.calls ?? 0;
@@ -12,15 +12,15 @@ function metric(step?: Step) {
 
 function formulaByAlgo(algorithm: AlgoType) {
   if (algorithm === 'bottomup') {
-    return 'dp(e,f) = min_{1 <= x <= f} [ 1 + max(dp(e-1,x-1), dp(e,f-x)) ]';
+    return 'dp[e][f] = min_{1 <= x <= f} (1 + max(dp[e-1][x-1], dp[e][f-x]))';
   }
   if (algorithm === 'topdown') {
-    return 'T(K,N) = min_{1 <= x <= N} [ 1 + max(T(K-1,x-1), T(K,N-x)) ], with memo';
+    return 'T(K,N) = min_{1 <= x <= N} (1 + max(T(K-1,x-1), T(K,N-x))) + memo';
   }
   if (algorithm === 'reach') {
     return 'reach[k] = reach[k] + reach[k-1] + 1';
   }
-  return 'T(K,N) = min_{1 <= x <= N} [ 1 + max(T(K-1,x-1), T(K,N-x)) ]';
+  return 'T(K,N) = min_{1 <= x <= N} (1 + max(T(K-1,x-1), T(K,N-x)))';
 }
 
 export default function TeachingContent({ step, algorithm }: { step?: Step; algorithm: AlgoType }) {
@@ -35,7 +35,7 @@ export default function TeachingContent({ step, algorithm }: { step?: Step; algo
           问题背景说明
         </div>
         <p className="text-sm text-[#5a5075] leading-7">
-          {'目标：在最坏情况下用最少次数确定门槛楼层 F。若从楼层 x 投掷鸡蛋，x > F 会碎，x <= F 不碎。'}
+          目标：在最坏情况下用最少次数确定门槛楼层 F。若从楼层 x 投掷鸡蛋，x &gt; F 会碎，x &lt;= F 不碎。
         </p>
         <div className="mt-3 warm-subcard p-2 text-sm flex flex-wrap gap-2">
           <span className="px-2 py-1 rounded soft-blue border">安全区间 1..F</span>
@@ -49,13 +49,13 @@ export default function TeachingContent({ step, algorithm }: { step?: Step; algo
           <Sigma size={18} />
           核心递推公式
         </div>
-        <div className="warm-subcard p-3 font-['Cambria_Math','Times_New_Roman',serif] text-[22px] leading-[1.25] text-[#3f355b] overflow-auto">
+        <div className="warm-subcard p-3 font-['Cambria_Math','Times_New_Roman',serif] text-[20px] leading-[1.25] text-[#3f355b] overflow-auto">
           <span className="whitespace-nowrap">{formula}</span>
         </div>
         <div className="mt-2 flex flex-wrap gap-2 text-xs">
-          <span className="px-2 py-1 rounded soft-pink border">T(K-1,x-1)：鸡蛋碎了</span>
+          <span className="px-2 py-1 rounded soft-pink border">T(K-1,x-1)：鸡蛋碎</span>
           <span className="px-2 py-1 rounded soft-blue border">T(K,N-x)：鸡蛋未碎</span>
-          <span className="px-2 py-1 rounded soft-purple border">max：考虑最坏情况</span>
+          <span className="px-2 py-1 rounded soft-purple border">max：最坏情况</span>
           <span className="px-2 py-1 rounded soft-purple border">min：选择最优楼层</span>
         </div>
       </div>
@@ -112,7 +112,7 @@ export default function TeachingContent({ step, algorithm }: { step?: Step; algo
         <div className="soft-title text-lg font-semibold mb-2">学习小结</div>
         <ul className="text-sm leading-7 text-[#5a5075] list-disc pl-4">
           <li>蛮力法重复子问题严重。</li>
-          <li>自顶向下 DP 利用缓存显著减少重复计算。</li>
+          <li>自顶向下 DP 用缓存显著减少重复计算。</li>
           <li>自底向上 DP 通过填表使每个状态只计算一次。</li>
           <li>三种算法结果一致，但效率差异明显。</li>
         </ul>

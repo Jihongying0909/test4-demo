@@ -39,41 +39,59 @@ export function generateBruteForceSteps(K: number, N: number): Step[] {
     stack.push(`solve(${k},${n})`);
     nodes.push({ id, label: `T(${k},${n})`, x: 40 + (stack.length - 1) * 130, y: 50 + steps.length * 2, state: 'active' });
     if (parent && branch) edges.push({ from: parent, to: id, label: branch });
+
     logs.push(`Step ${steps.length + 2}: 调用 solve(${k},${n})`);
     push({ pseudoLine: 6, description: `进入状态 (${k},${n})`, action: 'call', currentState: { eggs: k, floors: n } });
 
+    push({ pseudoLine: 1, description: '检查 N=0 边界', action: 'check', currentState: { eggs: k, floors: n } });
     if (n === 0) {
-      push({ pseudoLine: 1, description: 'N=0，返回0', action: 'base', currentState: { eggs: k, floors: n }, returnValue: 0 });
+      push({ pseudoLine: 1, description: 'N=0，返回(0,0)', action: 'base', currentState: { eggs: k, floors: n }, returnValue: 0 });
       stack.pop();
       return { trials: 0, floor: 0 };
     }
+
+    push({ pseudoLine: 2, description: '检查 N=1 边界', action: 'check', currentState: { eggs: k, floors: n } });
     if (n === 1) {
-      push({ pseudoLine: 2, description: 'N=1，返回1', action: 'base', currentState: { eggs: k, floors: n }, returnValue: 1 });
+      push({ pseudoLine: 2, description: 'N=1，返回(1,1)', action: 'base', currentState: { eggs: k, floors: n }, returnValue: 1 });
       stack.pop();
       return { trials: 1, floor: 1 };
     }
+
+    push({ pseudoLine: 3, description: '检查 K=1 边界', action: 'check', currentState: { eggs: k, floors: n } });
     if (k === 1) {
-      push({ pseudoLine: 3, description: 'K=1，线性试验', action: 'base', currentState: { eggs: k, floors: n }, returnValue: n });
+      push({ pseudoLine: 3, description: `K=1，返回(${n},1)`, action: 'base', currentState: { eggs: k, floors: n }, returnValue: n });
       stack.pop();
       return { trials: n, floor: 1 };
     }
 
     let best = Number.POSITIVE_INFINITY;
     let bestFloor = 1;
+    push({ pseudoLine: 4, description: 'minTrials ← +∞', action: 'assign', currentState: { eggs: k, floors: n }, best });
+    push({ pseudoLine: 5, description: 'bestFloor ← 1', action: 'assign', currentState: { eggs: k, floors: n }, bestFloor });
+
     for (let x = 1; x <= n; x += 1) {
       logs.push(`Step ${steps.length + 2}: 枚举 x=${x}`);
-      push({ pseudoLine: 6, description: `枚举 x=${x}`, action: 'loop', currentState: { eggs: k, floors: n }, x, best, bestFloor });
+      push({ pseudoLine: 6, description: `for x: 当前 x=${x}`, action: 'loop', currentState: { eggs: k, floors: n }, x, best, bestFloor });
+
+      push({ pseudoLine: 7, description: `broken ← solve(${k - 1},${x - 1})`, action: 'call-broken', currentState: { eggs: k, floors: n }, x, best, bestFloor });
       const broken = solve(k - 1, x - 1, id, 'broken').trials;
+
+      push({ pseudoLine: 8, description: `safe ← solve(${k},${n - x})`, action: 'call-safe', currentState: { eggs: k, floors: n }, x, broken, best, bestFloor });
       const safe = solve(k, n - x, id, 'safe').trials;
+
       const worst = 1 + Math.max(broken, safe);
-      push({ pseudoLine: 9, description: `worst=1+max(${broken},${safe})=${worst}`, action: 'calc', currentState: { eggs: k, floors: n }, x, broken, safe, worst, best, bestFloor });
+      push({ pseudoLine: 9, description: `worst ← 1 + max(${broken},${safe}) = ${worst}`, action: 'calc', currentState: { eggs: k, floors: n }, x, broken, safe, worst, best, bestFloor });
+
+      push({ pseudoLine: 10, description: `if worst(${worst}) < minTrials(${best})`, action: 'if-check', currentState: { eggs: k, floors: n }, x, broken, safe, worst, best, bestFloor });
       if (worst < best) {
         best = worst;
         bestFloor = x;
-        push({ pseudoLine: 11, description: `更新最优: best=${best}, floor=${bestFloor}`, action: 'best', currentState: { eggs: k, floors: n }, x, broken, safe, worst, best, bestFloor });
+        push({ pseudoLine: 11, description: `minTrials ← ${best}`, action: 'assign', currentState: { eggs: k, floors: n }, x, broken, safe, worst, best, bestFloor });
+        push({ pseudoLine: 12, description: `bestFloor ← ${bestFloor}`, action: 'assign', currentState: { eggs: k, floors: n }, x, broken, safe, worst, best, bestFloor });
       }
     }
-    push({ pseudoLine: 13, description: `返回(${best}, ${bestFloor})`, action: 'return', currentState: { eggs: k, floors: n }, best, bestFloor, returnValue: best });
+
+    push({ pseudoLine: 13, description: `return (${best},${bestFloor})`, action: 'return', currentState: { eggs: k, floors: n }, best, bestFloor, returnValue: best });
     stack.pop();
     return { trials: best, floor: bestFloor };
   };
@@ -113,24 +131,28 @@ export function generateTopDownSteps(K: number, N: number): Step[] {
     const key = `${k},${n}`;
     stack.push(`solve(${k},${n})`);
     heat[k][n] += 1;
-    push({ pseudoLine: 7, description: `进入 solve(${k},${n})`, action: 'call', currentState: { eggs: k, floors: n } });
 
+    push({ pseudoLine: 1, description: `检查 memo 是否包含 (${k},${n})`, action: 'memo-check', currentState: { eggs: k, floors: n } });
     if (memo.has(key)) {
       hits += 1;
       const val = memo.get(key)!;
       logs.push(`Step ${steps.length + 2}: memo 命中 solve(${k},${n})`);
-      push({ pseudoLine: 1, description: `缓存命中 (${k},${n})`, action: 'hit', currentState: { eggs: k, floors: n }, returnValue: val.trials, best: val.trials, bestFloor: val.floor });
+      push({ pseudoLine: 1, description: `memo 命中，返回(${val.trials},${val.floor})`, action: 'hit', currentState: { eggs: k, floors: n }, returnValue: val.trials, best: val.trials, bestFloor: val.floor });
       stack.pop();
       return val;
     }
+
+    push({ pseudoLine: 2, description: '检查 N=0', action: 'check', currentState: { eggs: k, floors: n } });
     if (n === 0) {
       stack.pop();
       return { trials: 0, floor: 0 };
     }
+    push({ pseudoLine: 3, description: '检查 N=1', action: 'check', currentState: { eggs: k, floors: n } });
     if (n === 1) {
       stack.pop();
       return { trials: 1, floor: 1 };
     }
+    push({ pseudoLine: 4, description: '检查 K=1', action: 'check', currentState: { eggs: k, floors: n } });
     if (k === 1) {
       stack.pop();
       return { trials: n, floor: 1 };
@@ -138,21 +160,34 @@ export function generateTopDownSteps(K: number, N: number): Step[] {
 
     let best = Number.POSITIVE_INFINITY;
     let bestFloor = 1;
+    push({ pseudoLine: 5, description: 'bestTrials ← +∞', action: 'assign', currentState: { eggs: k, floors: n }, best });
+    push({ pseudoLine: 6, description: 'bestFloor ← 1', action: 'assign', currentState: { eggs: k, floors: n }, bestFloor });
+
     for (let x = 1; x <= n; x += 1) {
+      push({ pseudoLine: 7, description: `for x: 当前 x=${x}`, action: 'loop', currentState: { eggs: k, floors: n }, x, best, bestFloor });
+
+      push({ pseudoLine: 8, description: `broken ← solve(${k - 1},${x - 1})`, action: 'call-broken', currentState: { eggs: k, floors: n }, x, best, bestFloor });
       const broken = solve(k - 1, x - 1).trials;
+
+      push({ pseudoLine: 9, description: `safe ← solve(${k},${n - x})`, action: 'call-safe', currentState: { eggs: k, floors: n }, x, broken, best, bestFloor });
       const safe = solve(k, n - x).trials;
+
       const worst = 1 + Math.max(broken, safe);
-      push({ pseudoLine: 10, description: `x=${x}, worst=${worst}`, action: 'calc', currentState: { eggs: k, floors: n }, x, broken, safe, worst, best, bestFloor });
+      push({ pseudoLine: 10, description: `worst ← 1 + max(${broken},${safe}) = ${worst}`, action: 'calc', currentState: { eggs: k, floors: n }, x, broken, safe, worst, best, bestFloor });
+
+      push({ pseudoLine: 11, description: `if worst(${worst}) < bestTrials(${best})`, action: 'if-check', currentState: { eggs: k, floors: n }, x, broken, safe, worst, best, bestFloor });
       if (worst < best) {
         best = worst;
         bestFloor = x;
-        push({ pseudoLine: 12, description: `更新 best=${best}`, action: 'best', currentState: { eggs: k, floors: n }, x, best, bestFloor });
+        push({ pseudoLine: 12, description: `bestTrials ← ${best}`, action: 'assign', currentState: { eggs: k, floors: n }, x, best, bestFloor });
+        push({ pseudoLine: 13, description: `bestFloor ← ${bestFloor}`, action: 'assign', currentState: { eggs: k, floors: n }, x, best, bestFloor });
       }
     }
 
     memo.set(key, { trials: best, floor: bestFloor });
-    logs.push(`Step ${steps.length + 2}: 缓存写入 (${k},${n})`);
-    push({ pseudoLine: 14, description: `写入 memo[${key}] = (${best},${bestFloor})`, action: 'memo-write', currentState: { eggs: k, floors: n }, best, bestFloor, returnValue: best });
+    logs.push(`Step ${steps.length + 2}: 写入 memo(${k},${n})`);
+    push({ pseudoLine: 14, description: `memo[${key}] ← (${best},${bestFloor})`, action: 'memo-write', currentState: { eggs: k, floors: n }, best, bestFloor, returnValue: best });
+    push({ pseudoLine: 15, description: `return memo[${key}]`, action: 'return', currentState: { eggs: k, floors: n }, best, bestFloor, returnValue: best });
     stack.pop();
     return { trials: best, floor: bestFloor };
   };
@@ -182,38 +217,50 @@ export function generateBottomUpSteps(K: number, N: number): Step[] {
     });
   };
 
+  push({ pseudoLine: 1, description: 'create dp[K+1][N+1]', action: 'init', currentState: { eggs: K, floors: N } });
+  push({ pseudoLine: 2, description: 'create choice[K+1][N+1]', action: 'init', currentState: { eggs: K, floors: N } });
+
   for (let f = 0; f <= N; f += 1) dp[1][f] = f;
+  push({ pseudoLine: 3, description: 'initialize dp[1][f] = f', action: 'init', currentState: { eggs: 1, floors: N } });
+
   for (let e = 1; e <= K; e += 1) {
     dp[e][0] = 0;
     if (N >= 1) dp[e][1] = 1;
   }
-  push({ pseudoLine: 4, description: '初始化完成', action: 'init', currentState: { eggs: K, floors: N } });
+  push({ pseudoLine: 4, description: 'initialize dp[e][0], dp[e][1]', action: 'init', currentState: { eggs: K, floors: N } });
 
   for (let e = 2; e <= K; e += 1) {
+    push({ pseudoLine: 5, description: `for e: 当前 e=${e}`, action: 'loop-e', currentState: { eggs: e, floors: N } });
     for (let f = 2; f <= N; f += 1) {
+      push({ pseudoLine: 6, description: `for f: 当前 f=${f}`, action: 'loop-f', currentState: { eggs: e, floors: f } });
       let best = Number.POSITIVE_INFINITY;
       let bestX = 1;
+      push({ pseudoLine: 7, description: 'best ← +∞', action: 'assign', currentState: { eggs: e, floors: f }, best });
+      push({ pseudoLine: 8, description: 'bestX ← 1', action: 'assign', currentState: { eggs: e, floors: f }, bestFloor: bestX });
       for (let x = 1; x <= f; x += 1) {
+        push({ pseudoLine: 9, description: `for x: 当前 x=${x}`, action: 'loop-x', currentState: { eggs: e, floors: f }, x, best, bestFloor: bestX });
         const broken = dp[e - 1][x - 1];
         const safe = dp[e][f - x];
         const worst = 1 + Math.max(broken, safe);
-        push({ pseudoLine: 10, description: `计算 dp[${e}][${f}], x=${x}`, action: 'calc', currentState: { eggs: e, floors: f }, x, broken, safe, worst, best, bestFloor: bestX });
+        push({ pseudoLine: 10, description: `worst = 1 + max(${broken},${safe}) = ${worst}`, action: 'calc', currentState: { eggs: e, floors: f }, x, broken, safe, worst, best, bestFloor: bestX });
+        push({ pseudoLine: 11, description: `if worst(${worst}) < best(${best})`, action: 'if-check', currentState: { eggs: e, floors: f }, x, worst, best, bestFloor: bestX });
         if (worst < best) {
           best = worst;
           bestX = x;
-          push({ pseudoLine: 12, description: `更新 best=${best}, bestX=${bestX}`, action: 'best', currentState: { eggs: e, floors: f }, x, best, bestFloor: bestX });
+          push({ pseudoLine: 12, description: `best ← ${best}`, action: 'assign', currentState: { eggs: e, floors: f }, x, best, bestFloor: bestX });
+          push({ pseudoLine: 13, description: `bestX ← ${bestX}`, action: 'assign', currentState: { eggs: e, floors: f }, x, best, bestFloor: bestX });
         }
       }
       dp[e][f] = best;
       choice[e][f] = bestX;
       heat[e][f] += 1;
       filled += 1;
-      logs.push(`Step ${steps.length + 2}: 填写 dp[${e}][${f}]=${best}`);
-      push({ pseudoLine: 14, description: `写入 dp/choice`, action: 'write', currentState: { eggs: e, floors: f }, best, bestFloor: bestX, returnValue: best });
+      push({ pseudoLine: 14, description: `dp[${e}][${f}] ← ${best}`, action: 'write', currentState: { eggs: e, floors: f }, best, bestFloor: bestX, returnValue: best });
+      push({ pseudoLine: 15, description: `choice[${e}][${f}] ← ${bestX}`, action: 'write', currentState: { eggs: e, floors: f }, best, bestFloor: bestX, returnValue: best });
     }
   }
 
-  push({ pseudoLine: 16, description: `返回 (${dp[K][N]}, ${choice[K][N]})`, action: 'return', currentState: { eggs: K, floors: N }, returnValue: dp[K][N], bestFloor: choice[K][N] });
+  push({ pseudoLine: 16, description: `return (dp[K][N], choice[K][N]) = (${dp[K][N]}, ${choice[K][N]})`, action: 'return', currentState: { eggs: K, floors: N }, returnValue: dp[K][N], bestFloor: choice[K][N] });
   return steps;
 }
 

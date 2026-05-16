@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import ControlPanel from './components/ControlPanel';
 import PseudocodePanel from './components/PseudocodePanel';
 import VisualizationPanel from './components/VisualizationPanel';
@@ -8,7 +8,6 @@ import ExecutionLog from './components/ExecutionLog';
 import CallStackPanel from './components/CallStackPanel';
 import HeatmapView from './components/HeatmapView';
 import ComparePanel from './components/ComparePanel';
-import Legend from './components/Legend';
 import TeachingContent from './components/TeachingContent';
 import RuntimeCharts from './components/RuntimeCharts';
 import { pseudoMap } from './data/pseudocode';
@@ -51,7 +50,7 @@ export default function App() {
         }
         return p + 1;
       });
-    }, 280);
+    }, 180);
     return () => clearInterval(t);
   }, [status, steps.length]);
 
@@ -74,6 +73,8 @@ export default function App() {
     setStatus('Ready');
   };
 
+  const linesKey = algorithm === 'reach' ? 'bottomup' : algorithm;
+
   return (
     <div className="min-h-screen p-3 lg:p-4 bg-[#f7f5ff] text-[#43385a]">
       <ControlPanel
@@ -88,7 +89,7 @@ export default function App() {
         status={status}
         onStart={start}
         onPrev={() => { setStatus('Paused'); setIdx((v) => Math.max(0, v - 1)); }}
-        onNext={() => { setStatus('Paused'); setIdx((v) => Math.min(steps.length - 1, v + 1)); }}
+        onNext={() => { setStatus('Paused'); setIdx((v) => Math.min(Math.max(0, steps.length - 1), v + 1)); }}
         onPlay={() => setStatus('Running')}
         onPause={() => setStatus('Paused')}
         onReset={() => { setStatus('Ready'); setIdx(0); }}
@@ -98,7 +99,7 @@ export default function App() {
 
       <div className="grid grid-cols-1 xl:grid-cols-20 gap-3 mt-3">
         <div className="xl:col-span-6">
-          <PseudocodePanel lines={pseudoMap[algorithm === 'reach' ? 'bottomup' : algorithm]} current={current?.pseudoLine ?? 0} visited={visited} />
+          <PseudocodePanel lines={pseudoMap[linesKey]} current={current?.pseudoLine ?? 0} visited={visited} />
         </div>
         <div className="xl:col-span-9">
           <VisualizationPanel step={current} tab={tab} setTab={setTab} totalFloors={n} />
@@ -106,14 +107,13 @@ export default function App() {
         <div className="xl:col-span-5 space-y-3">
           <StateMonitor step={current} />
           <CallStackPanel stack={current?.callStack} />
-          <Legend />
         </div>
       </div>
 
       <div className="warm-card mt-3 p-4">
-        <div className="text-sm font-semibold soft-title mb-3">步骤讲解与日志</div>
+        <div className="text-lg font-semibold soft-title mb-3">步骤信息</div>
         <div className="flex items-center gap-2 mb-3">
-          <button onClick={() => setBottomTab('explain')} className={`px-3 py-1.5 text-sm rounded-xl border ${bottomTab === 'explain' ? 'soft-purple' : 'bg-[#fcfbff] border-[#e9e4f8]'}`}>当前步骤解释</button>
+          <button onClick={() => setBottomTab('explain')} className={`px-3 py-1.5 text-sm rounded-xl border ${bottomTab === 'explain' ? 'soft-purple' : 'bg-[#fcfbff] border-[#e9e4f8]'}`}>当前解释</button>
           <button onClick={() => setBottomTab('log')} className={`px-3 py-1.5 text-sm rounded-xl border ${bottomTab === 'log' ? 'soft-blue' : 'bg-[#fcfbff] border-[#e9e4f8]'}`}>运行日志</button>
           <button onClick={() => setBottomTab('complexity')} className={`px-3 py-1.5 text-sm rounded-xl border ${bottomTab === 'complexity' ? 'soft-pink' : 'bg-[#fcfbff] border-[#e9e4f8]'}`}>复杂度说明</button>
         </div>
@@ -122,10 +122,10 @@ export default function App() {
         {bottomTab === 'log' && <ExecutionLog logs={current?.logs} />}
         {bottomTab === 'complexity' && (
           <div className="warm-subcard p-4 text-sm leading-7 text-[#5c5077]">
-            <div>蛮力法：时间复杂度约 O(N^(K-2) * 2^N)。</div>
+            <div>蛮力法时间复杂度约为 O(N^(K-2) * 2^N)。</div>
             <div>自顶向下 DP：时间 O(KN²)，空间 O(KN)。</div>
             <div>自底向上 DP：时间 O(KN²)，空间 O(KN)。</div>
-            <div>一维优化：reach[k] = reach[k] + reach[k-1] + 1。</div>
+            <div>一维优化思想：reach[k] = reach[k] + reach[k-1] + 1。</div>
           </div>
         )}
       </div>

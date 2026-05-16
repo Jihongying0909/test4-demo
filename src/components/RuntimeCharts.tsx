@@ -1,4 +1,4 @@
-﻿import { Step } from '../types';
+import { Step } from '../types';
 
 function toNum(v: unknown) {
   return typeof v === 'number' ? v : 0;
@@ -8,8 +8,8 @@ export default function RuntimeCharts({ steps, currentIndex }: { steps: Step[]; 
   if (!steps.length) {
     return (
       <div className="warm-card p-4">
-        <div className="soft-title font-semibold mb-1">实时结果图表</div>
-        <div className="text-sm soft-sub">开始运行后将显示调用次数、命中次数、重复率等动态曲线。</div>
+        <div className="text-lg font-semibold soft-title mb-1">实时结果图表</div>
+        <div className="text-sm soft-sub">开始运行后，这里会实时更新调用次数、命中次数、重复次数曲线。</div>
       </div>
     );
   }
@@ -41,7 +41,7 @@ export default function RuntimeCharts({ steps, currentIndex }: { steps: Step[]; 
   return (
     <div className="warm-card p-4">
       <div className="flex items-center justify-between mb-2">
-        <div className="soft-title font-semibold">实时结果图表（运行中自动更新）</div>
+        <div className="text-lg font-semibold soft-title">实时结果图表（运行中自动更新）</div>
         <div className="text-xs soft-sub">Step {currentIndex + 1} / {steps.length}</div>
       </div>
 

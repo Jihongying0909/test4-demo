@@ -26,11 +26,11 @@ function BranchCompare({ step }: { step: Step }) {
 
   return (
     <div className="grid grid-cols-2 gap-2 mb-2 text-xs">
-      <div className={`p-2 rounded-lg border transition-all ${hasX ? 'bg-[#FDE6CD] border-[#E5B176]' : 'bg-[#f5f2fa] border-[#ddd6f4] text-[#9a93b1]'}`}>
+      <div className={`p-2 rounded-lg border transition-all ${hasX ? 'bg-[#fce7f3] border-[#f5cfe4]' : 'bg-[#f5f2fa] border-[#ddd6f4] text-[#9a93b1]'}`}>
         <div className="font-semibold">鸡蛋破碎</div>
         <div>转到 ({hasX ? k - 1 : '-'}, {hasX ? x - 1 : '-'})</div>
       </div>
-      <div className={`p-2 rounded-lg border transition-all ${hasX ? 'bg-[#EAF4EA] border-[#9FBCA3]' : 'bg-[#f5f2fa] border-[#ddd6f4] text-[#9a93b1]'}`}>
+      <div className={`p-2 rounded-lg border transition-all ${hasX ? 'bg-[#e8f2ff] border-[#cfe0ff]' : 'bg-[#f5f2fa] border-[#ddd6f4] text-[#9a93b1]'}`}>
         <div className="font-semibold">鸡蛋未碎</div>
         <div>转到 ({hasX ? k : '-'}, {hasX ? Math.max(0, n - x) : '-'})</div>
       </div>
@@ -50,11 +50,10 @@ function FloorRangeBar({ step, totalFloors }: { step: Step; totalFloors: number 
           const cls = !hasX
             ? 'bg-[#f5f2fa] border-[#ddd6f4] text-[#9a93b1]'
             : f === x
-              ? 'bg-[#F59E0B] text-white border-[#D97706]'
+              ? 'bg-[#c4b5fd] text-[#3f2d78] border-[#a78bfa]'
               : f < x!
-                ? 'bg-[#FDE6CD] border-[#E5B176] text-[#7B4C2C]'
-                : 'bg-[#EAF4EA] border-[#9FBCA3] text-[#4F6D56]';
-
+                ? 'bg-[#fce7f3] border-[#f5cfe4] text-[#8a4f73]'
+                : 'bg-[#e8f2ff] border-[#cfe0ff] text-[#44638f]';
           return (
             <div key={f} className={`h-6 text-[10px] rounded border flex items-center justify-center transition-all ${cls}`}>
               {f}
@@ -63,18 +62,18 @@ function FloorRangeBar({ step, totalFloors }: { step: Step; totalFloors: number 
         })}
       </div>
       <div className="mt-1 text-[10px] text-[#7C6A5D]">
-        {hasX ? `x=${x}，左侧为碎后区间，右侧为未碎后区间。` : '当前步骤未枚举 x，区间示意保持常驻（未高亮）。'}
+        {hasX ? `x=${x}，左侧为碎后区间，右侧为未碎后区间。` : '当前步骤未枚举 x，区间示意保持静态。'}
       </div>
     </div>
   );
 }
 
 export default function VisualizationPanel({ step, tab, setTab, totalFloors }: { step?: Step; tab: 'table' | 'reach'; setTab: (v: 'table' | 'reach') => void; totalFloors: number }) {
-  if (!step) return <div className="warm-card rounded-2xl p-4 h-[520px]">请先点击 Start</div>;
+  if (!step) return <div className="warm-card rounded-2xl p-4 h-[620px]">点击 Start 开始生成可视化。</div>;
 
   return (
-    <div className="warm-card rounded-2xl p-4 h-[520px] overflow-auto relative">
-      <div className="absolute inset-0 pointer-events-none opacity-30" style={{ backgroundImage: 'radial-gradient(#E7D9C8 0.8px, transparent 0.8px)', backgroundSize: '14px 14px' }} />
+    <div className="warm-card rounded-2xl p-4 h-[620px] overflow-auto relative">
+      <div className="absolute inset-0 pointer-events-none opacity-30" style={{ backgroundImage: 'radial-gradient(#e8e3f6 0.8px, transparent 0.8px)', backgroundSize: '14px 14px' }} />
       <div className="relative z-10">
         <FormulaCard step={step} />
         <BranchCompare step={step} />

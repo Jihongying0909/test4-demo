@@ -18,7 +18,7 @@ export default function ComparePanel({ brute, top, bottom }: { brute?: Step[]; t
 
   return (
     <div className="warm-card p-4 overflow-auto">
-      <div className="text-sm text-[#7C6A5D] mb-2">算法对比面板</div>
+      <div className="text-lg font-semibold soft-title mb-2">算法对比面板</div>
       <table className="w-full text-xs">
         <thead>
           <tr className="text-[#7C6A5D]">
@@ -27,7 +27,7 @@ export default function ComparePanel({ brute, top, bottom }: { brute?: Step[]; t
             <th className="text-left">首投楼层</th>
             <th className="text-left">调用次数</th>
             <th className="text-left">缓存命中</th>
-            <th className="text-left">状态数量</th>
+            <th className="text-left">状态数</th>
           </tr>
         </thead>
         <tbody>
