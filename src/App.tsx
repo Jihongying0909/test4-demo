@@ -10,6 +10,7 @@ import HeatmapView from './components/HeatmapView';
 import ComparePanel from './components/ComparePanel';
 import Legend from './components/Legend';
 import TeachingContent from './components/TeachingContent';
+import RuntimeCharts from './components/RuntimeCharts';
 import { pseudoMap } from './data/pseudocode';
 import { Step } from './types';
 import { generateBottomUpSteps, generateBruteForceSteps, generateReachDpSteps, generateTopDownSteps } from './utils/stepGenerators';
@@ -134,6 +135,10 @@ export default function App() {
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-3 mt-3">
         <div className="xl:col-span-4"><HeatmapView heat={current?.heatmap} /></div>
         <div className="xl:col-span-8"><ComparePanel brute={allCompare.brute} top={allCompare.top} bottom={allCompare.bottom} /></div>
+      </div>
+
+      <div className="mt-3">
+        <RuntimeCharts steps={steps} currentIndex={idx} />
       </div>
     </div>
   );
