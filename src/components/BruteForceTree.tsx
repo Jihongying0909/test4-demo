@@ -16,9 +16,7 @@ export default function BruteForceTree({ step }: { step: Step }) {
   const nodes = step.treeNodes ?? [];
   const edges = step.treeEdges ?? [];
 
-  if (!nodes.length) {
-    return <div className="text-[#7C6A5D]">暂无递归树</div>;
-  }
+  if (!nodes.length) return <div className="text-[#7C6A5D]">暂无递归树</div>;
 
   const byId = new Map(nodes.map((n) => [n.id, n]));
   const incoming = new Map<string, number>();
@@ -34,25 +32,18 @@ export default function BruteForceTree({ step }: { step: Step }) {
   });
 
   const root = nodes.find((n) => !incoming.get(n.id))?.id ?? nodes[0].id;
-
   const ordered: LayoutNode[] = [];
   let cursor = 0;
 
   const dfs = (id: string, depth: number) => {
     const child = children.get(id) ?? [];
-    const broken = child.filter((c) => c.label === 'broken');
-    const safe = child.filter((c) => c.label === 'safe');
-    const sorted = [...broken, ...safe];
-
+    const sorted = [...child.filter((c) => c.label === 'broken'), ...child.filter((c) => c.label === 'safe')];
     const yOrder = cursor;
     cursor += 1;
-
     const n = byId.get(id);
     if (n) ordered.push({ ...n, depth, yOrder });
-
     sorted.forEach((s) => dfs(s.id, depth + 1));
   };
-
   dfs(root, 0);
 
   const currentLabel = `T(${step.currentState.eggs},${step.currentState.floors})`;
@@ -67,100 +58,60 @@ export default function BruteForceTree({ step }: { step: Step }) {
     walk = parent.get(walk) ?? '';
   }
 
-  const xGap = 180;
-  const yGap = 68;
+  const treeScale = nodes.length <= 10 ? 1.2 : nodes.length <= 20 ? 1.05 : 1;
+  const xGap = nodes.length <= 10 ? 210 : 175;
+  const yGap = nodes.length <= 10 ? 74 : 62;
   const topPad = 30;
   const leftPad = 70;
 
   const pos = new Map<string, { x: number; y: number }>();
-  ordered.forEach((n) => {
-    pos.set(n.id, {
-      x: leftPad + n.depth * xGap,
-      y: topPad + n.yOrder * yGap,
-    });
-  });
+  ordered.forEach((n) => pos.set(n.id, { x: leftPad + n.depth * xGap, y: topPad + n.yOrder * yGap }));
 
-  const width = Math.max(900, ...ordered.map((n) => leftPad + n.depth * xGap + 220));
-  const height = Math.max(420, ...ordered.map((n) => topPad + n.yOrder * yGap + 80));
+  const width = Math.max(860, ...ordered.map((n) => leftPad + n.depth * xGap + 220));
+  const height = Math.max(380, ...ordered.map((n) => topPad + n.yOrder * yGap + 80));
 
   return (
     <div>
       <div className="flex items-center justify-between mb-2">
-        <div className="text-sm text-[#7C6A5D]">递归树（层级布局，broken 在上，safe 在下）</div>
+        <div className="text-sm text-[#7C6A5D]">递归树（broken 上，safe 下）</div>
         <div className="text-xs px-2 py-1 rounded-full bg-[#FFF8F0] border border-[#E7D9C8] text-[#8C6E58]">聚焦当前路径</div>
       </div>
+      <div className="warm-subcard p-2">
+        <div className="overflow-auto">
+          <svg width={width} height={height} style={{ transform: `scale(${treeScale})`, transformOrigin: '0 0' }}>
+            {edges.map((e, i) => {
+              const a = pos.get(e.from);
+              const b = pos.get(e.to);
+              if (!a || !b) return null;
+              const active = focusPath.has(e.from) && focusPath.has(e.to);
+              const midX = (a.x + b.x) / 2;
+              const midY = (a.y + b.y) / 2 + (e.label === 'broken' ? -13 : 13);
+              const path = `M ${a.x + 62} ${a.y} C ${a.x + 105} ${a.y}, ${b.x - 105} ${b.y}, ${b.x - 62} ${b.y}`;
+              return (
+                <g key={`${e.from}-${e.to}-${i}`} opacity={active ? 1 : 0.26}>
+                  <path d={path} fill="none" stroke={active ? '#B79273' : '#D7C5B2'} strokeWidth={2} />
+                  <rect x={midX - 24} y={midY - 9} width={48} height={18} rx={9} fill={e.label === 'broken' ? '#FDE6CD' : '#EAF4EA'} stroke={e.label === 'broken' ? '#E5B176' : '#9FBCA3'} />
+                  <text x={midX} y={midY + 3} fontSize="10" textAnchor="middle" fill="#6D5546">{e.label}</text>
+                </g>
+              );
+            })}
 
-      <div className="overflow-auto rounded-2xl border border-[#E7D9C8] bg-[#FFFDF9] p-2">
-        <svg width={width} height={height}>
-          {edges.map((e, i) => {
-            const a = pos.get(e.from);
-            const b = pos.get(e.to);
-            if (!a || !b) return null;
-
-            const active = focusPath.has(e.from) && focusPath.has(e.to);
-            const midX = (a.x + b.x) / 2;
-            const midY = (a.y + b.y) / 2 + (e.label === 'broken' ? -14 : 14);
-            const path = `M ${a.x + 62} ${a.y} C ${a.x + 105} ${a.y}, ${b.x - 105} ${b.y}, ${b.x - 62} ${b.y}`;
-
-            return (
-              <g key={`${e.from}-${e.to}-${i}`} opacity={active ? 1 : 0.25}>
-                <path d={path} fill="none" stroke={active ? '#B79273' : '#D7C5B2'} strokeWidth={2} />
-                <rect
-                  x={midX - 26}
-                  y={midY - 10}
-                  width={52}
-                  height={18}
-                  rx={9}
-                  fill={e.label === 'broken' ? '#FDE6CD' : '#EAF4EA'}
-                  stroke={e.label === 'broken' ? '#E5B176' : '#9FBCA3'}
-                />
-                <text x={midX} y={midY + 3} fontSize="10" textAnchor="middle" fill="#6D5546">
-                  {e.label}
-                </text>
-              </g>
-            );
-          })}
-
-          {ordered.map((n) => {
-            const p = pos.get(n.id)!;
-            const style = nodeStyle(n.state);
-            const onPath = focusPath.has(n.id);
-            const isFocus = n.id === focusId;
-            const isRepeat = n.state === 'repeat';
-
-            return (
-              <motion.g
-                key={n.id}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: onPath ? 1 : 0.42, scale: isFocus ? 1.04 : 1 }}
-                transition={{ duration: 0.22 }}
-              >
-                <rect
-                  x={p.x - 60}
-                  y={p.y - 22}
-                  width={120}
-                  height={44}
-                  rx={12}
-                  fill={style.fill}
-                  stroke={style.stroke}
-                  strokeWidth={isFocus ? 2.8 : 1.6}
-                  style={isFocus ? { filter: 'drop-shadow(0 0 8px rgba(217,119,6,0.35))' } : {}}
-                />
-                <text x={p.x} y={p.y + 3} textAnchor="middle" fontSize="12" fill="#4B3A2F" fontWeight={600}>
-                  {n.label}
-                </text>
-                {isRepeat && (
-                  <g>
-                    <rect x={p.x + 26} y={p.y - 30} width={32} height={14} rx={7} fill="#E8B4B8" />
-                    <text x={p.x + 42} y={p.y - 20} textAnchor="middle" fontSize="9" fill="#6F3F43">
-                      重复
-                    </text>
-                  </g>
-                )}
-              </motion.g>
-            );
-          })}
-        </svg>
+            {ordered.map((n) => {
+              const p = pos.get(n.id)!;
+              const style = nodeStyle(n.state);
+              const onPath = focusPath.has(n.id);
+              const isFocus = n.id === focusId;
+              const isRepeat = n.state === 'repeat';
+              return (
+                <motion.g key={n.id} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: onPath ? 1 : 0.42, scale: isFocus ? 1.05 : 1 }} transition={{ duration: 0.22 }}>
+                  <rect x={p.x - 60} y={p.y - 22} width={120} height={44} rx={12} fill={style.fill} stroke={style.stroke} strokeWidth={isFocus ? 2.8 : 1.5} style={isFocus ? { filter: 'drop-shadow(0 0 8px rgba(217,119,6,0.35))' } : {}} />
+                  <text x={p.x} y={p.y + 3} textAnchor="middle" fontSize="12" fill="#4B3A2F" fontWeight={600}>{n.label}</text>
+                  {isRepeat && <g><rect x={p.x + 26} y={p.y - 30} width={32} height={14} rx={7} fill="#E8B4B8" /><text x={p.x + 42} y={p.y - 20} textAnchor="middle" fontSize="9" fill="#6F3F43">重复</text></g>}
+                </motion.g>
+              );
+            })}
+          </svg>
+        </div>
       </div>
     </div>
   );

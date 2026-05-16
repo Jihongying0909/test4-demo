@@ -29,6 +29,7 @@ export default function App() {
   const [status, setStatus] = useState<'Ready' | 'Running' | 'Paused' | 'Finished'>('Ready');
   const [speed, setSpeed] = useState(1000);
   const [tab, setTab] = useState<'table' | 'reach'>('table');
+  const [bottomTab, setBottomTab] = useState<'explain' | 'log' | 'complexity'>('explain');
 
   const allCompare = useMemo(() => ({
     brute: generateBruteForceSteps(Math.min(k, 4), Math.min(n, 8)),
@@ -73,7 +74,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen p-4 lg:p-7 bg-[#F8F4EE] text-[#4B3A2F]">
+    <div className="min-h-screen p-3 lg:p-4 bg-[#F8F4EE] text-[#4B3A2F]">
       <ControlPanel
         k={k}
         n={n}
@@ -94,27 +95,43 @@ export default function App() {
         onReset={() => { setStatus('Ready'); setIdx(0); }}
       />
 
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 mt-5">
-        <div className="xl:col-span-3">
+      <div className="grid grid-cols-1 xl:grid-cols-20 gap-3 mt-3">
+        <div className="xl:col-span-6">
           <PseudocodePanel lines={pseudoMap[algorithm === 'reach' ? 'bottomup' : algorithm]} current={current?.pseudoLine ?? 0} visited={visited} />
         </div>
-        <div className="xl:col-span-6">
+        <div className="xl:col-span-9">
           <VisualizationPanel step={current} tab={tab} setTab={setTab} />
         </div>
-        <div className="xl:col-span-3 space-y-4">
+        <div className="xl:col-span-5 space-y-3">
           <StateMonitor step={current} />
           <CallStackPanel stack={current?.callStack} />
           <Legend />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 mt-5">
-        <div className="xl:col-span-5"><StepExplanation step={current} /></div>
-        <div className="xl:col-span-4"><ExecutionLog logs={current?.logs} /></div>
-        <div className="xl:col-span-3"><HeatmapView heat={current?.heatmap} /></div>
+      <div className="warm-card mt-3 p-4">
+        <div className="flex items-center gap-2 mb-3">
+          <button onClick={() => setBottomTab('explain')} className={`px-3 py-1.5 text-sm rounded-xl border ${bottomTab === 'explain' ? 'bg-[#FCE7C8] border-[#D97706]' : 'bg-[#FFF8F0] border-[#E7D9C8]'}`}>当前步骤解释</button>
+          <button onClick={() => setBottomTab('log')} className={`px-3 py-1.5 text-sm rounded-xl border ${bottomTab === 'log' ? 'bg-[#FCE7C8] border-[#D97706]' : 'bg-[#FFF8F0] border-[#E7D9C8]'}`}>运行日志</button>
+          <button onClick={() => setBottomTab('complexity')} className={`px-3 py-1.5 text-sm rounded-xl border ${bottomTab === 'complexity' ? 'bg-[#FCE7C8] border-[#D97706]' : 'bg-[#FFF8F0] border-[#E7D9C8]'}`}>复杂度说明</button>
+        </div>
+
+        {bottomTab === 'explain' && <StepExplanation step={current} />}
+        {bottomTab === 'log' && <ExecutionLog logs={current?.logs} />}
+        {bottomTab === 'complexity' && (
+          <div className="warm-subcard p-4 text-sm leading-7 text-[#5B4739]">
+            <div>蛮力法：时间复杂度约 O(N^(K-2) * 2^N)，重复子问题多。</div>
+            <div>自顶向下 DP：时间 O(KN²)，空间 O(KN)，递归 + 缓存。</div>
+            <div>自底向上 DP：时间 O(KN²)，空间 O(KN)，填表稳定。</div>
+            <div>一维优化：reach[k] = reach[k] + reach[k-1] + 1。</div>
+          </div>
+        )}
       </div>
 
-      <div className="mt-5"><ComparePanel brute={allCompare.brute} top={allCompare.top} bottom={allCompare.bottom} /></div>
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-3 mt-3">
+        <div className="xl:col-span-4"><HeatmapView heat={current?.heatmap} /></div>
+        <div className="xl:col-span-8"><ComparePanel brute={allCompare.brute} top={allCompare.top} bottom={allCompare.bottom} /></div>
+      </div>
     </div>
   );
 }
