@@ -1,12 +1,23 @@
-﻿import { Step, TreeEdge, TreeNode } from '../types';
+import { Step, TreeEdge, TreeNode } from '../types';
 
 type Result = { trials: number; floor: number };
 
 const clone2D = (arr: number[][]) => arr.map((r) => [...r]);
 
+function makeLogger() {
+  const logs: string[] = [];
+  let no = 0;
+  const addLog = (msg: string) => {
+    no += 1;
+    logs.push(`Step ${no}: ${msg}`);
+  };
+  return { logs, addLog };
+}
+
 export function generateBruteForceSteps(K: number, N: number): Step[] {
   const steps: Step[] = [];
-  const logs: string[] = [`Step 1: 输入 K=${K}, N=${N}`];
+  const { logs, addLog } = makeLogger();
+  addLog(`输入 K=${K}, N=${N}`);
   const stack: string[] = [];
   const heat = Array.from({ length: K + 1 }, () => Array(N + 1).fill(0));
   let calls = 0;
@@ -16,7 +27,7 @@ export function generateBruteForceSteps(K: number, N: number): Step[] {
   const edges: TreeEdge[] = [];
 
   const push = (s: Partial<Step> & Pick<Step, 'pseudoLine' | 'description' | 'action' | 'currentState'>) => {
-    logs.push(`Step ${steps.length + 2}: ${s.description}`);
+    addLog(s.description);
     steps.push({
       id: steps.length + 1,
       algorithm: 'bruteforce',
@@ -41,7 +52,7 @@ export function generateBruteForceSteps(K: number, N: number): Step[] {
     nodes.push({ id, label: `T(${k},${n})`, x: 40 + (stack.length - 1) * 130, y: 50 + steps.length * 2, state: 'active' });
     if (parent && branch) edges.push({ from: parent, to: id, label: branch });
 
-    logs.push(`Step ${steps.length + 2}: 调用 solve(${k},${n})`);
+    addLog(`调用 solve(${k},${n})`);
     push({ pseudoLine: 6, description: `进入状态 (${k},${n})`, action: 'call', currentState: { eggs: k, floors: n } });
 
     push({ pseudoLine: 1, description: '检查 N=0 边界', action: 'check', currentState: { eggs: k, floors: n } });
@@ -71,7 +82,7 @@ export function generateBruteForceSteps(K: number, N: number): Step[] {
     push({ pseudoLine: 5, description: 'bestFloor ← 1', action: 'assign', currentState: { eggs: k, floors: n }, bestFloor });
 
     for (let x = 1; x <= n; x += 1) {
-      logs.push(`Step ${steps.length + 2}: 枚举 x=${x}`);
+      addLog(`枚举 x=${x}`);
       push({ pseudoLine: 6, description: `for x: 当前 x=${x}`, action: 'loop', currentState: { eggs: k, floors: n }, x, best, bestFloor });
 
       push({ pseudoLine: 7, description: `broken ← solve(${k - 1},${x - 1})`, action: 'call-broken', currentState: { eggs: k, floors: n }, x, best, bestFloor });
@@ -104,14 +115,15 @@ export function generateBruteForceSteps(K: number, N: number): Step[] {
 export function generateTopDownSteps(K: number, N: number): Step[] {
   const steps: Step[] = [];
   const memo = new Map<string, Result>();
-  const logs: string[] = [`Step 1: 输入 K=${K}, N=${N}`];
+  const { logs, addLog } = makeLogger();
+  addLog(`输入 K=${K}, N=${N}`);
   const stack: string[] = [];
   const heat = Array.from({ length: K + 1 }, () => Array(N + 1).fill(0));
   let calls = 0;
   let hits = 0;
 
   const push = (s: Partial<Step> & Pick<Step, 'pseudoLine' | 'description' | 'action' | 'currentState'>) => {
-    logs.push(`Step ${steps.length + 2}: ${s.description}`);
+    addLog(s.description);
     const memoObj: Step['memo'] = {};
     memo.forEach((v, k) => {
       memoObj[k] = { trials: v.trials, floor: v.floor, status: 'new' };
@@ -138,27 +150,18 @@ export function generateTopDownSteps(K: number, N: number): Step[] {
     if (memo.has(key)) {
       hits += 1;
       const val = memo.get(key)!;
-      logs.push(`Step ${steps.length + 2}: memo 命中 solve(${k},${n})`);
+      addLog(`memo 命中 solve(${k},${n})`);
       push({ pseudoLine: 1, description: `memo 命中，返回(${val.trials},${val.floor})`, action: 'hit', currentState: { eggs: k, floors: n }, returnValue: val.trials, best: val.trials, bestFloor: val.floor });
       stack.pop();
       return val;
     }
 
     push({ pseudoLine: 2, description: '检查 N=0', action: 'check', currentState: { eggs: k, floors: n } });
-    if (n === 0) {
-      stack.pop();
-      return { trials: 0, floor: 0 };
-    }
+    if (n === 0) { stack.pop(); return { trials: 0, floor: 0 }; }
     push({ pseudoLine: 3, description: '检查 N=1', action: 'check', currentState: { eggs: k, floors: n } });
-    if (n === 1) {
-      stack.pop();
-      return { trials: 1, floor: 1 };
-    }
+    if (n === 1) { stack.pop(); return { trials: 1, floor: 1 }; }
     push({ pseudoLine: 4, description: '检查 K=1', action: 'check', currentState: { eggs: k, floors: n } });
-    if (k === 1) {
-      stack.pop();
-      return { trials: n, floor: 1 };
-    }
+    if (k === 1) { stack.pop(); return { trials: n, floor: 1 }; }
 
     let best = Number.POSITIVE_INFINITY;
     let bestFloor = 1;
@@ -167,16 +170,12 @@ export function generateTopDownSteps(K: number, N: number): Step[] {
 
     for (let x = 1; x <= n; x += 1) {
       push({ pseudoLine: 7, description: `for x: 当前 x=${x}`, action: 'loop', currentState: { eggs: k, floors: n }, x, best, bestFloor });
-
       push({ pseudoLine: 8, description: `broken ← solve(${k - 1},${x - 1})`, action: 'call-broken', currentState: { eggs: k, floors: n }, x, best, bestFloor });
       const broken = solve(k - 1, x - 1).trials;
-
       push({ pseudoLine: 9, description: `safe ← solve(${k},${n - x})`, action: 'call-safe', currentState: { eggs: k, floors: n }, x, broken, best, bestFloor });
       const safe = solve(k, n - x).trials;
-
       const worst = 1 + Math.max(broken, safe);
       push({ pseudoLine: 10, description: `worst ← 1 + max(${broken},${safe}) = ${worst}`, action: 'calc', currentState: { eggs: k, floors: n }, x, broken, safe, worst, best, bestFloor });
-
       push({ pseudoLine: 11, description: `if worst(${worst}) < bestTrials(${best})`, action: 'if-check', currentState: { eggs: k, floors: n }, x, broken, safe, worst, best, bestFloor });
       if (worst < best) {
         best = worst;
@@ -187,7 +186,7 @@ export function generateTopDownSteps(K: number, N: number): Step[] {
     }
 
     memo.set(key, { trials: best, floor: bestFloor });
-    logs.push(`Step ${steps.length + 2}: 写入 memo(${k},${n})`);
+    addLog(`写入 memo(${k},${n})`);
     push({ pseudoLine: 14, description: `memo[${key}] ← (${best},${bestFloor})`, action: 'memo-write', currentState: { eggs: k, floors: n }, best, bestFloor, returnValue: best });
     push({ pseudoLine: 15, description: `return memo[${key}]`, action: 'return', currentState: { eggs: k, floors: n }, best, bestFloor, returnValue: best });
     stack.pop();
@@ -200,14 +199,15 @@ export function generateTopDownSteps(K: number, N: number): Step[] {
 
 export function generateBottomUpSteps(K: number, N: number): Step[] {
   const steps: Step[] = [];
-  const logs: string[] = [`Step 1: 输入 K=${K}, N=${N}`];
+  const { logs, addLog } = makeLogger();
+  addLog(`输入 K=${K}, N=${N}`);
   const dp = Array.from({ length: K + 1 }, () => Array(N + 1).fill(0));
   const choice = Array.from({ length: K + 1 }, () => Array(N + 1).fill(0));
   const heat = Array.from({ length: K + 1 }, () => Array(N + 1).fill(0));
   let filled = 0;
 
   const push = (s: Partial<Step> & Pick<Step, 'pseudoLine' | 'description' | 'action' | 'currentState'>) => {
-    logs.push(`Step ${steps.length + 2}: ${s.description}`);
+    addLog(s.description);
     steps.push({
       id: steps.length + 1,
       algorithm: 'bottomup',
@@ -222,14 +222,9 @@ export function generateBottomUpSteps(K: number, N: number): Step[] {
 
   push({ pseudoLine: 1, description: 'create dp[K+1][N+1]', action: 'init', currentState: { eggs: K, floors: N } });
   push({ pseudoLine: 2, description: 'create choice[K+1][N+1]', action: 'init', currentState: { eggs: K, floors: N } });
-
   for (let f = 0; f <= N; f += 1) dp[1][f] = f;
   push({ pseudoLine: 3, description: 'initialize dp[1][f] = f', action: 'init', currentState: { eggs: 1, floors: N } });
-
-  for (let e = 1; e <= K; e += 1) {
-    dp[e][0] = 0;
-    if (N >= 1) dp[e][1] = 1;
-  }
+  for (let e = 1; e <= K; e += 1) { dp[e][0] = 0; if (N >= 1) dp[e][1] = 1; }
   push({ pseudoLine: 4, description: 'initialize dp[e][0], dp[e][1]', action: 'init', currentState: { eggs: K, floors: N } });
 
   for (let e = 2; e <= K; e += 1) {
@@ -262,7 +257,6 @@ export function generateBottomUpSteps(K: number, N: number): Step[] {
       push({ pseudoLine: 15, description: `choice[${e}][${f}] ← ${bestX}`, action: 'write', currentState: { eggs: e, floors: f }, best, bestFloor: bestX, returnValue: best });
     }
   }
-
   push({ pseudoLine: 16, description: `return (dp[K][N], choice[K][N]) = (${dp[K][N]}, ${choice[K][N]})`, action: 'return', currentState: { eggs: K, floors: N }, returnValue: dp[K][N], bestFloor: choice[K][N] });
   return steps;
 }
@@ -270,11 +264,12 @@ export function generateBottomUpSteps(K: number, N: number): Step[] {
 export function generateReachDpSteps(K: number, N: number): Step[] {
   const steps: Step[] = [];
   const reach = Array(K + 1).fill(0);
-  const logs: string[] = [`Step 1: 输入 K=${K}, N=${N}`];
+  const { logs, addLog } = makeLogger();
+  addLog(`输入 K=${K}, N=${N}`);
   let m = 0;
 
   const push = (desc: string, k?: number) => {
-    logs.push(`Step ${steps.length + 2}: ${desc}`);
+    addLog(desc);
     steps.push({
       id: steps.length + 1,
       algorithm: 'reach',
@@ -293,10 +288,11 @@ export function generateReachDpSteps(K: number, N: number): Step[] {
   while (reach[K] < N && m < 200) {
     m += 1;
     for (let k = K; k >= 1; k -= 1) {
+      addLog(`m=${m}, 更新 reach[${k}]`);
       reach[k] = reach[k] + reach[k - 1] + 1;
-      logs.push(`Step ${steps.length + 2}: m=${m}, 更新 reach[${k}]`);
       push(`m=${m}, reach[${k}] ← reach[${k}] + reach[${k - 1}] + 1`, k);
     }
   }
   return steps;
 }
+
