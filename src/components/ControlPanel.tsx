@@ -1,13 +1,14 @@
-import { Play, Pause, RotateCcw, SkipBack, SkipForward, Rocket } from 'lucide-react';
+﻿import { Play, Pause, RotateCcw, SkipBack, SkipForward, Rocket } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { AlgoType } from '../types';
 
 interface Props {
   k: number;
   n: number;
   setK: (v: number) => void;
   setN: (v: number) => void;
-  algorithm: string;
-  setAlgorithm: (v: string) => void;
+  algorithm: AlgoType;
+  setAlgorithm: (v: AlgoType) => void;
   speed: number;
   setSpeed: (v: number) => void;
   step: number;
@@ -43,7 +44,7 @@ export default function ControlPanel(p: Props) {
           <input type="number" value={p.k} min={1} onChange={(e) => p.setK(Number(e.target.value))} className={`${inputCls} w-20`} />
           <input type="number" value={p.n} min={0} onChange={(e) => p.setN(Number(e.target.value))} className={`${inputCls} w-20`} />
 
-          <select value={p.algorithm} onChange={(e) => p.setAlgorithm(e.target.value)} className={`${inputCls} w-40`}>
+          <select value={p.algorithm} onChange={(e) => p.setAlgorithm(e.target.value as AlgoType)} className={`${inputCls} w-40`}>
             <option value="bruteforce">蛮力递归</option>
             <option value="topdown">自顶向下 DP</option>
             <option value="bottomup">自底向上 DP</option>

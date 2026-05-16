@@ -1,6 +1,4 @@
-import { Step } from '../types';
-
-export default function HeatmapView({ heat }: { heat?: number[][] }) {
+﻿export default function HeatmapView({ heat }: { heat?: number[][] }) {
   if (!heat || heat.length === 0) return null;
   const flat = heat.flat().map(Number);
   const max = Math.max(1, ...flat);
