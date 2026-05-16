@@ -59,7 +59,7 @@ export default function App() {
   const start = () => {
     const limit = limits[algorithm];
     if (k > limit.k || n > limit.n) {
-      alert('当前规模过大，建议使用较小参数进行可视化演示。');
+      alert('褰撳墠瑙勬ā杩囧ぇ锛屽缓璁娇鐢ㄨ緝灏忓弬鏁拌繘琛屽彲瑙嗗寲婕旂ず銆?);
       return;
     }
     const generated = algorithm === 'bruteforce'
@@ -97,7 +97,7 @@ export default function App() {
         onReset={() => { setStatus('Ready'); setIdx(0); }}
       />
 
-      <TeachingContent step={current} n={n} algorithm={algorithm} />
+      <TeachingContent step={current} algorithm={algorithm} />
 
       <div className="grid grid-cols-1 xl:grid-cols-20 gap-3 mt-3">
         <div className="xl:col-span-6">
@@ -115,19 +115,19 @@ export default function App() {
 
       <div className="warm-card mt-3 p-4">
         <div className="flex items-center gap-2 mb-3">
-          <button onClick={() => setBottomTab('explain')} className={`px-3 py-1.5 text-sm rounded-xl border ${bottomTab === 'explain' ? 'soft-purple' : 'bg-[#fcfbff] border-[#e9e4f8]'}`}>当前步骤解释</button>
-          <button onClick={() => setBottomTab('log')} className={`px-3 py-1.5 text-sm rounded-xl border ${bottomTab === 'log' ? 'soft-blue' : 'bg-[#fcfbff] border-[#e9e4f8]'}`}>运行日志</button>
-          <button onClick={() => setBottomTab('complexity')} className={`px-3 py-1.5 text-sm rounded-xl border ${bottomTab === 'complexity' ? 'soft-pink' : 'bg-[#fcfbff] border-[#e9e4f8]'}`}>复杂度说明</button>
+          <button onClick={() => setBottomTab('explain')} className={`px-3 py-1.5 text-sm rounded-xl border ${bottomTab === 'explain' ? 'soft-purple' : 'bg-[#fcfbff] border-[#e9e4f8]'}`}>褰撳墠姝ラ瑙ｉ噴</button>
+          <button onClick={() => setBottomTab('log')} className={`px-3 py-1.5 text-sm rounded-xl border ${bottomTab === 'log' ? 'soft-blue' : 'bg-[#fcfbff] border-[#e9e4f8]'}`}>杩愯鏃ュ織</button>
+          <button onClick={() => setBottomTab('complexity')} className={`px-3 py-1.5 text-sm rounded-xl border ${bottomTab === 'complexity' ? 'soft-pink' : 'bg-[#fcfbff] border-[#e9e4f8]'}`}>澶嶆潅搴﹁鏄?/button>
         </div>
 
         {bottomTab === 'explain' && <StepExplanation step={current} />}
         {bottomTab === 'log' && <ExecutionLog logs={current?.logs} />}
         {bottomTab === 'complexity' && (
           <div className="warm-subcard p-4 text-sm leading-7 text-[#5c5077]">
-            <div>蛮力法：时间复杂度约 O(N^(K-2) * 2^N)。</div>
-            <div>自顶向下 DP：时间 O(KN²)，空间 O(KN)。</div>
-            <div>自底向上 DP：时间 O(KN²)，空间 O(KN)。</div>
-            <div>一维优化：reach[k] = reach[k] + reach[k-1] + 1。</div>
+            <div>铔姏娉曪細鏃堕棿澶嶆潅搴︾害 O(N^(K-2) * 2^N)銆?/div>
+            <div>鑷《鍚戜笅 DP锛氭椂闂?O(KN虏)锛岀┖闂?O(KN)銆?/div>
+            <div>鑷簳鍚戜笂 DP锛氭椂闂?O(KN虏)锛岀┖闂?O(KN)銆?/div>
+            <div>涓€缁翠紭鍖栵細reach[k] = reach[k] + reach[k-1] + 1銆?/div>
           </div>
         )}
       </div>
@@ -143,3 +143,4 @@ export default function App() {
     </div>
   );
 }
+

@@ -17,74 +17,75 @@ function formulaByAlgo(algorithm: AlgoType) {
   return 'T_{K,N}=\\min_{1\\le x \\le N}\\left(1+\\max(T_{K-1,x-1},T_{K,N-x})\\right)';
 }
 
-export default function TeachingContent({ step, n, algorithm }: { step?: Step; n: number; algorithm: AlgoType }) {
+export default function TeachingContent({ step, algorithm }: { step?: Step; algorithm: AlgoType }) {
   const m = metric(step);
   const formula = formulaByAlgo(algorithm);
 
   return (
     <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 mt-3">
       <div className="warm-card p-4">
-        <div className="flex items-center gap-2 soft-title text-lg font-semibold mb-2"><BookOpen size={18} />问题背景说明</div>
-        <p className="text-sm text-[#5a5075] leading-7">目标：在最坏情况下用最少次数确定门槛楼层 F。若从楼层 x 投掷鸡蛋，x {'>'} F 会碎，x {'<='} F 不碎。</p>
+        <div className="flex items-center gap-2 soft-title text-lg font-semibold mb-2"><BookOpen size={18} />闂鑳屾櫙璇存槑</div>
+        <p className="text-sm text-[#5a5075] leading-7">鐩爣锛氬湪鏈€鍧忔儏鍐典笅鐢ㄦ渶灏戞鏁扮‘瀹氶棬妲涙ゼ灞?F銆傝嫢浠庢ゼ灞?x 鎶曟幏楦¤泲锛寈 {'>'} F 浼氱锛寈 {'<='} F 涓嶇銆?/p>
         <div className="mt-3 warm-subcard p-2 text-sm flex flex-wrap gap-2">
-          <span className="px-2 py-1 rounded soft-blue border">安全区间 1..F</span>
-          <span className="px-2 py-1 rounded soft-purple border">门槛层 F</span>
-          <span className="px-2 py-1 rounded soft-pink border">危险区间 F+1..N</span>
+          <span className="px-2 py-1 rounded soft-blue border">瀹夊叏鍖洪棿 1..F</span>
+          <span className="px-2 py-1 rounded soft-purple border">闂ㄦ灞?F</span>
+          <span className="px-2 py-1 rounded soft-pink border">鍗遍櫓鍖洪棿 F+1..N</span>
         </div>
       </div>
 
       <div className="warm-card p-4">
-        <div className="flex items-center gap-2 soft-title text-lg font-semibold mb-2"><Sigma size={18} />核心递推公式</div>
+        <div className="flex items-center gap-2 soft-title text-lg font-semibold mb-2"><Sigma size={18} />鏍稿績閫掓帹鍏紡</div>
         <div className="warm-subcard p-3 font-['Cambria_Math','Times_New_Roman',serif] text-[30px] leading-[1.25] text-[#3f355b] overflow-auto">
           <span className="whitespace-nowrap">{formula}</span>
         </div>
         <div className="mt-2 flex flex-wrap gap-2 text-xs">
-          <span className="px-2 py-1 rounded soft-pink border">T(K-1,x-1)：鸡蛋碎了</span>
-          <span className="px-2 py-1 rounded soft-blue border">T(K,N-x)：鸡蛋未碎</span>
-          <span className="px-2 py-1 rounded soft-purple border">max：考虑最坏情况</span>
-          <span className="px-2 py-1 rounded soft-purple border">min：选择最优楼层</span>
+          <span className="px-2 py-1 rounded soft-pink border">T(K-1,x-1)锛氶浮铔嬬浜?/span>
+          <span className="px-2 py-1 rounded soft-blue border">T(K,N-x)锛氶浮铔嬫湭纰?/span>
+          <span className="px-2 py-1 rounded soft-purple border">max锛氳€冭檻鏈€鍧忔儏鍐?/span>
+          <span className="px-2 py-1 rounded soft-purple border">min锛氶€夋嫨鏈€浼樻ゼ灞?/span>
         </div>
       </div>
 
       <div className="warm-card p-4">
-        <div className="flex items-center gap-2 soft-title text-lg font-semibold mb-2"><BarChart3 size={18} />三种算法对比说明</div>
+        <div className="flex items-center gap-2 soft-title text-lg font-semibold mb-2"><BarChart3 size={18} />涓夌绠楁硶瀵规瘮璇存槑</div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-xs">
-          <div className="warm-subcard p-2"><div className="font-semibold">蛮力递归</div><div>直接枚举，不保存结果，重复计算多。</div><span className="inline-block mt-1 px-2 py-0.5 rounded soft-pink border">指数级</span></div>
-          <div className="warm-subcard p-2"><div className="font-semibold">自顶向下 DP</div><div>递归 + memo 缓存，避免重复计算。</div><span className="inline-block mt-1 px-2 py-0.5 rounded soft-blue border">O(KN²)</span></div>
-          <div className="warm-subcard p-2"><div className="font-semibold">自底向上 DP</div><div>二维表填表，从小问题推大问题。</div><span className="inline-block mt-1 px-2 py-0.5 rounded soft-purple border">O(KN²)</span></div>
+          <div className="warm-subcard p-2"><div className="font-semibold">铔姏閫掑綊</div><div>鐩存帴鏋氫妇锛屼笉淇濆瓨缁撴灉锛岄噸澶嶈绠楀銆?/div><span className="inline-block mt-1 px-2 py-0.5 rounded soft-pink border">鎸囨暟绾?/span></div>
+          <div className="warm-subcard p-2"><div className="font-semibold">鑷《鍚戜笅 DP</div><div>閫掑綊 + memo 缂撳瓨锛岄伩鍏嶉噸澶嶈绠椼€?/div><span className="inline-block mt-1 px-2 py-0.5 rounded soft-blue border">O(KN虏)</span></div>
+          <div className="warm-subcard p-2"><div className="font-semibold">鑷簳鍚戜笂 DP</div><div>浜岀淮琛ㄥ～琛紝浠庡皬闂鎺ㄥぇ闂銆?/div><span className="inline-block mt-1 px-2 py-0.5 rounded soft-purple border">O(KN虏)</span></div>
         </div>
       </div>
 
       <div className="warm-card p-4">
-        <div className="soft-title text-lg font-semibold mb-2">重复子问题观察区</div>
+        <div className="soft-title text-lg font-semibold mb-2">閲嶅瀛愰棶棰樿瀵熷尯</div>
         <div className="grid grid-cols-2 gap-2 text-xs">
-          <div className="warm-subcard p-2">总调用次数<div className="text-lg font-semibold">{m.calls}</div></div>
-          <div className="warm-subcard p-2">不同状态数<div className="text-lg font-semibold">{m.states}</div></div>
-          <div className="warm-subcard p-2">重复计算次数<div className="text-lg font-semibold text-[#8a4f73]">{m.repeat}</div></div>
-          <div className="warm-subcard p-2">重复率<div className="text-lg font-semibold">{m.rate}%</div></div>
-          <div className="warm-subcard p-2 col-span-2">缓存命中次数<div className="text-lg font-semibold text-[#44638f]">{m.hits}</div></div>
+          <div className="warm-subcard p-2">鎬昏皟鐢ㄦ鏁?div className="text-lg font-semibold">{m.calls}</div></div>
+          <div className="warm-subcard p-2">涓嶅悓鐘舵€佹暟<div className="text-lg font-semibold">{m.states}</div></div>
+          <div className="warm-subcard p-2">閲嶅璁＄畻娆℃暟<div className="text-lg font-semibold text-[#8a4f73]">{m.repeat}</div></div>
+          <div className="warm-subcard p-2">閲嶅鐜?div className="text-lg font-semibold">{m.rate}%</div></div>
+          <div className="warm-subcard p-2 col-span-2">缂撳瓨鍛戒腑娆℃暟<div className="text-lg font-semibold text-[#44638f]">{m.hits}</div></div>
         </div>
       </div>
 
       <div className="warm-card p-4">
-        <div className="flex items-center gap-2 soft-title text-lg font-semibold mb-2"><FlaskConical size={18} />实验结果与最大规模</div>
+        <div className="flex items-center gap-2 soft-title text-lg font-semibold mb-2"><FlaskConical size={18} />瀹為獙缁撴灉涓庢渶澶ц妯?/div>
         <div className="text-sm leading-7 text-[#5a5075]">
-          <div>蛮力法：E≤12, F≤16</div>
-          <div>自顶向下 DP：E≤12, F≤994</div>
-          <div>自底向上 DP：E≤12, F≤3039</div>
-          <div className="mt-1 soft-sub">条件：单组时间阈值 10 秒，F 搜索上限 5000。</div>
+          <div>铔姏娉曪細E鈮?2, F鈮?6</div>
+          <div>鑷《鍚戜笅 DP锛欵鈮?2, F鈮?94</div>
+          <div>鑷簳鍚戜笂 DP锛欵鈮?2, F鈮?039</div>
+          <div className="mt-1 soft-sub">鏉′欢锛氬崟缁勬椂闂撮槇鍊?10 绉掞紝F 鎼滅储涓婇檺 5000銆?/div>
         </div>
       </div>
 
       <div className="warm-card p-4">
-        <div className="soft-title text-lg font-semibold mb-2">学习小结</div>
+        <div className="soft-title text-lg font-semibold mb-2">瀛︿範灏忕粨</div>
         <ul className="text-sm leading-7 text-[#5a5075] list-disc pl-4">
-          <li>蛮力法重复子问题严重。</li>
-          <li>自顶向下 DP 利用缓存显著减少重复计算。</li>
-          <li>自底向上 DP 通过填表使每个状态只计算一次。</li>
-          <li>三种算法结果一致，但效率差异明显。</li>
+          <li>铔姏娉曢噸澶嶅瓙闂涓ラ噸銆?/li>
+          <li>鑷《鍚戜笅 DP 鍒╃敤缂撳瓨鏄捐憲鍑忓皯閲嶅璁＄畻銆?/li>
+          <li>鑷簳鍚戜笂 DP 閫氳繃濉〃浣挎瘡涓姸鎬佸彧璁＄畻涓€娆°€?/li>
+          <li>涓夌绠楁硶缁撴灉涓€鑷达紝浣嗘晥鐜囧樊寮傛槑鏄俱€?/li>
         </ul>
       </div>
     </div>
   );
 }
+
