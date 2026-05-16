@@ -96,16 +96,16 @@ export default function App() {
         onReset={() => { setStatus('Ready'); setIdx(0); }}
       />
 
-      <TeachingContent step={current} n={n} />
+      <TeachingContent step={current} n={n} algorithm={algorithm} />
 
-      <div className="grid grid-cols-1 xl:grid-cols-20 gap-3 mt-3 items-stretch">
-        <div className="xl:col-span-6 h-full">
+      <div className="grid grid-cols-1 xl:grid-cols-20 gap-3 mt-3">
+        <div className="xl:col-span-6">
           <PseudocodePanel lines={pseudoMap[algorithm === 'reach' ? 'bottomup' : algorithm]} current={current?.pseudoLine ?? 0} visited={visited} />
         </div>
-        <div className="xl:col-span-9 h-full">
+        <div className="xl:col-span-9">
           <VisualizationPanel step={current} tab={tab} setTab={setTab} totalFloors={n} />
         </div>
-        <div className="xl:col-span-5 h-full grid grid-rows-3 gap-3">
+        <div className="xl:col-span-5 space-y-3">
           <StateMonitor step={current} />
           <CallStackPanel stack={current?.callStack} />
           <Legend />
@@ -131,9 +131,9 @@ export default function App() {
         )}
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-3 mt-3 items-stretch">
-        <div className="xl:col-span-4 h-full"><HeatmapView heat={current?.heatmap} /></div>
-        <div className="xl:col-span-8 h-full"><ComparePanel brute={allCompare.brute} top={allCompare.top} bottom={allCompare.bottom} /></div>
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-3 mt-3">
+        <div className="xl:col-span-4"><HeatmapView heat={current?.heatmap} /></div>
+        <div className="xl:col-span-8"><ComparePanel brute={allCompare.brute} top={allCompare.top} bottom={allCompare.bottom} /></div>
       </div>
     </div>
   );
