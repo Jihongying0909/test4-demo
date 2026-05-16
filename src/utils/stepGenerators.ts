@@ -25,7 +25,7 @@ export function generateBruteForceSteps(K: number, N: number): Step[] {
       heatmap: clone2D(heat),
       treeNodes: nodes.map((n) => ({ ...n })),
       treeEdges: edges.map((e) => ({ ...e })),
-      metrics: { calls, hits: repeats, states: seen.size, filled: 0 },
+      metrics: { calls, hits: 0, states: seen.size, filled: 0 },
       ...s,
     });
   };

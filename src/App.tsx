@@ -97,14 +97,14 @@ export default function App() {
 
       <TeachingContent step={current} algorithm={algorithm} />
 
-      <div className="grid grid-cols-1 xl:grid-cols-20 gap-3 mt-3">
-        <div className="xl:col-span-6">
+      <div className="grid grid-cols-1 xl:grid-cols-20 gap-3 mt-3 items-stretch">
+        <div className="xl:col-span-6 h-full">
           <PseudocodePanel lines={pseudoMap[linesKey]} current={current?.pseudoLine ?? 0} visited={visited} />
         </div>
-        <div className="xl:col-span-9">
+        <div className="xl:col-span-9 h-full">
           <VisualizationPanel step={current} tab={tab} setTab={setTab} totalFloors={n} />
         </div>
-        <div className="xl:col-span-5 space-y-3">
+        <div className="xl:col-span-5 space-y-3 h-full">
           <StateMonitor step={current} />
           <CallStackPanel stack={current?.callStack} />
         </div>
@@ -130,9 +130,9 @@ export default function App() {
         )}
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-3 mt-3">
-        <div className="xl:col-span-4"><HeatmapView heat={current?.heatmap} /></div>
-        <div className="xl:col-span-8"><ComparePanel brute={allCompare.brute} top={allCompare.top} bottom={allCompare.bottom} /></div>
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-3 mt-3 items-stretch">
+        <div className="xl:col-span-4 h-full"><HeatmapView heat={current?.heatmap} /></div>
+        <div className="xl:col-span-8 h-full"><ComparePanel brute={allCompare.brute} top={allCompare.top} bottom={allCompare.bottom} /></div>
       </div>
 
       <div className="mt-3">
