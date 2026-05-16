@@ -33,11 +33,14 @@ export default function App() {
   const [tab, setTab] = useState<'table' | 'reach'>('table');
   const [bottomTab, setBottomTab] = useState<'explain' | 'log' | 'complexity'>('explain');
 
-  const allCompare = useMemo(() => ({
-    brute: generateBruteForceSteps(Math.min(k, 4), Math.min(n, 8)),
-    top: generateTopDownSteps(Math.min(k, 6), Math.min(n, 15)),
-    bottom: generateBottomUpSteps(Math.min(k, 8), Math.min(n, 20)),
-  }), [k, n]);
+  const allCompare = useMemo(
+    () => ({
+      brute: generateBruteForceSteps(Math.min(k, 4), Math.min(n, 8)),
+      top: generateTopDownSteps(Math.min(k, 6), Math.min(n, 15)),
+      bottom: generateBottomUpSteps(Math.min(k, 8), Math.min(n, 20)),
+    }),
+    [k, n],
+  );
 
   const current = steps[idx];
   const visited = new Set(steps.slice(0, idx + 1).map((s) => s.pseudoLine));
@@ -59,16 +62,18 @@ export default function App() {
   const start = () => {
     const limit = limits[algorithm];
     if (k > limit.k || n > limit.n) {
-      alert('褰撳墠瑙勬ā杩囧ぇ锛屽缓璁娇鐢ㄨ緝灏忓弬鏁拌繘琛屽彲瑙嗗寲婕旂ず銆?);
+      alert('当前规模过大，建议使用较小参数进行可视化演示。');
       return;
     }
-    const generated = algorithm === 'bruteforce'
-      ? generateBruteForceSteps(k, n)
-      : algorithm === 'topdown'
-        ? generateTopDownSteps(k, n)
-        : algorithm === 'bottomup'
-          ? generateBottomUpSteps(k, n)
-          : generateReachDpSteps(k, n);
+
+    const generated =
+      algorithm === 'bruteforce'
+        ? generateBruteForceSteps(k, n)
+        : algorithm === 'topdown'
+          ? generateTopDownSteps(k, n)
+          : algorithm === 'bottomup'
+            ? generateBottomUpSteps(k, n)
+            : generateReachDpSteps(k, n);
 
     setSteps(generated);
     setIdx(0);
@@ -90,18 +95,31 @@ export default function App() {
         total={steps.length}
         status={status}
         onStart={start}
-        onPrev={() => { setStatus('Paused'); setIdx((v) => Math.max(0, v - 1)); }}
-        onNext={() => { setStatus('Paused'); setIdx((v) => Math.min(steps.length - 1, v + 1)); }}
+        onPrev={() => {
+          setStatus('Paused');
+          setIdx((v) => Math.max(0, v - 1));
+        }}
+        onNext={() => {
+          setStatus('Paused');
+          setIdx((v) => Math.min(steps.length - 1, v + 1));
+        }}
         onPlay={() => setStatus('Running')}
         onPause={() => setStatus('Paused')}
-        onReset={() => { setStatus('Ready'); setIdx(0); }}
+        onReset={() => {
+          setStatus('Ready');
+          setIdx(0);
+        }}
       />
 
       <TeachingContent step={current} algorithm={algorithm} />
 
       <div className="grid grid-cols-1 xl:grid-cols-20 gap-3 mt-3">
         <div className="xl:col-span-6">
-          <PseudocodePanel lines={pseudoMap[algorithm === 'reach' ? 'bottomup' : algorithm]} current={current?.pseudoLine ?? 0} visited={visited} />
+          <PseudocodePanel
+            lines={pseudoMap[algorithm === 'reach' ? 'bottomup' : algorithm]}
+            current={current?.pseudoLine ?? 0}
+            visited={visited}
+          />
         </div>
         <div className="xl:col-span-9">
           <VisualizationPanel step={current} tab={tab} setTab={setTab} totalFloors={n} />
@@ -115,26 +133,46 @@ export default function App() {
 
       <div className="warm-card mt-3 p-4">
         <div className="flex items-center gap-2 mb-3">
-          <button onClick={() => setBottomTab('explain')} className={`px-3 py-1.5 text-sm rounded-xl border ${bottomTab === 'explain' ? 'soft-purple' : 'bg-[#fcfbff] border-[#e9e4f8]'}`}>褰撳墠姝ラ瑙ｉ噴</button>
-          <button onClick={() => setBottomTab('log')} className={`px-3 py-1.5 text-sm rounded-xl border ${bottomTab === 'log' ? 'soft-blue' : 'bg-[#fcfbff] border-[#e9e4f8]'}`}>杩愯鏃ュ織</button>
-          <button onClick={() => setBottomTab('complexity')} className={`px-3 py-1.5 text-sm rounded-xl border ${bottomTab === 'complexity' ? 'soft-pink' : 'bg-[#fcfbff] border-[#e9e4f8]'}`}>澶嶆潅搴﹁鏄?/button>
+          <button
+            onClick={() => setBottomTab('explain')}
+            className={`px-3 py-1.5 text-sm rounded-xl border ${bottomTab === 'explain' ? 'soft-purple' : 'bg-[#fcfbff] border-[#e9e4f8]'}`}
+          >
+            当前步骤解释
+          </button>
+          <button
+            onClick={() => setBottomTab('log')}
+            className={`px-3 py-1.5 text-sm rounded-xl border ${bottomTab === 'log' ? 'soft-blue' : 'bg-[#fcfbff] border-[#e9e4f8]'}`}
+          >
+            运行日志
+          </button>
+          <button
+            onClick={() => setBottomTab('complexity')}
+            className={`px-3 py-1.5 text-sm rounded-xl border ${bottomTab === 'complexity' ? 'soft-pink' : 'bg-[#fcfbff] border-[#e9e4f8]'}`}
+          >
+            复杂度说明
+          </button>
         </div>
 
         {bottomTab === 'explain' && <StepExplanation step={current} />}
         {bottomTab === 'log' && <ExecutionLog logs={current?.logs} />}
         {bottomTab === 'complexity' && (
           <div className="warm-subcard p-4 text-sm leading-7 text-[#5c5077]">
-            <div>铔姏娉曪細鏃堕棿澶嶆潅搴︾害 O(N^(K-2) * 2^N)銆?/div>
-            <div>鑷《鍚戜笅 DP锛氭椂闂?O(KN虏)锛岀┖闂?O(KN)銆?/div>
-            <div>鑷簳鍚戜笂 DP锛氭椂闂?O(KN虏)锛岀┖闂?O(KN)銆?/div>
-            <div>涓€缁翠紭鍖栵細reach[k] = reach[k] + reach[k-1] + 1銆?/div>
+            <div>{'蛮力法：时间复杂度约 O(N^(K-2) * 2^N)。'}</div>
+            <div>{'自顶向下 DP：时间 O(KN²)，空间 O(KN)。'}</div>
+            <div>{'自底向上 DP：时间 O(KN²)，空间 O(KN)。'}</div>
+            <div>{'一维优化：reach[k] = reach[k] + reach[k-1] + 1。'}</div>
+            <div>{'规模示例：E <= 12, F <= 3039。'}</div>
           </div>
         )}
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-3 mt-3">
-        <div className="xl:col-span-4"><HeatmapView heat={current?.heatmap} /></div>
-        <div className="xl:col-span-8"><ComparePanel brute={allCompare.brute} top={allCompare.top} bottom={allCompare.bottom} /></div>
+        <div className="xl:col-span-4">
+          <HeatmapView heat={current?.heatmap} />
+        </div>
+        <div className="xl:col-span-8">
+          <ComparePanel brute={allCompare.brute} top={allCompare.top} bottom={allCompare.bottom} />
+        </div>
       </div>
 
       <div className="mt-3">
@@ -143,4 +181,3 @@ export default function App() {
     </div>
   );
 }
-
