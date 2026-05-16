@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import ControlPanel from './components/ControlPanel';
 import PseudocodePanel from './components/PseudocodePanel';
 import VisualizationPanel from './components/VisualizationPanel';
@@ -30,12 +30,7 @@ export default function App() {
   const [status, setStatus] = useState<'Ready' | 'Running' | 'Paused' | 'Finished'>('Ready');
   const [tab, setTab] = useState<'table' | 'reach'>('table');
   const [bottomTab, setBottomTab] = useState<'explain' | 'log' | 'complexity'>('explain');
-
-  const allCompare = useMemo(() => ({
-    brute: generateBruteForceSteps(Math.min(k, 4), Math.min(n, 8)),
-    top: generateTopDownSteps(Math.min(k, 6), Math.min(n, 15)),
-    bottom: generateBottomUpSteps(Math.min(k, 8), Math.min(n, 20)),
-  }), [k, n]);
+  const [allCompare, setAllCompare] = useState<{ brute?: Step[]; top?: Step[]; bottom?: Step[] }>({});
 
   const current = steps[idx];
   const visited = new Set(steps.slice(0, idx + 1).map((s) => s.pseudoLine));
@@ -71,6 +66,15 @@ export default function App() {
     setSteps(generated);
     setIdx(0);
     setStatus('Ready');
+
+    // Compare data is expensive; compute only after Start to avoid UI freezing while typing.
+    setTimeout(() => {
+      setAllCompare({
+        brute: generateBruteForceSteps(Math.min(k, 4), Math.min(n, 8)),
+        top: generateTopDownSteps(Math.min(k, 6), Math.min(n, 15)),
+        bottom: generateBottomUpSteps(Math.min(k, 8), Math.min(n, 20)),
+      });
+    }, 0);
   };
 
   const linesKey = algorithm === 'reach' ? 'bottomup' : algorithm;
