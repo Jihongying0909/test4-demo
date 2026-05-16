@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  color: #0f172a;
+  background: #f5f7fb;
+}
+
+body {
+  margin: 0;
+  background: radial-gradient(circle at top right, #e0f2fe, #f5f7fb 30%), #f5f7fb;
+}
+
+* {
+  box-sizing: border-box;
+}

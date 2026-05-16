@@ -1,0 +1,1 @@
+﻿export default function CallStackPanel({ stack = [] }: { stack?: string[] }) { return <div className="bg-white rounded-2xl border border-slate-200 p-4"><div className="text-sm text-textSub">调用栈</div><div className="text-sm mt-2">{stack.join(' -> ') || '-'}</div></div>; }
