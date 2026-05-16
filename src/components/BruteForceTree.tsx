@@ -22,12 +22,10 @@ export default function BruteForceTree({ step }: { step: Step }) {
 
   const graph = useMemo(() => {
     if (!nodes.length) return null;
-
     const byId = new Map(nodes.map((n) => [n.id, n]));
     const incoming = new Map<string, number>();
     const children = new Map<string, { id: string; label: 'broken' | 'safe' }[]>();
     const parent = new Map<string, string>();
-
     edges.forEach((e) => {
       incoming.set(e.to, (incoming.get(e.to) ?? 0) + 1);
       const arr = children.get(e.from) ?? [];
@@ -35,9 +33,7 @@ export default function BruteForceTree({ step }: { step: Step }) {
       children.set(e.from, arr);
       parent.set(e.to, e.from);
     });
-
     const root = nodes.find((n) => !incoming.get(n.id))?.id ?? nodes[0].id;
-
     const ordered: LayoutNode[] = [];
     let cursor = 0;
     const dfs = (id: string, depth: number) => {
@@ -50,19 +46,16 @@ export default function BruteForceTree({ step }: { step: Step }) {
       sorted.forEach((s) => dfs(s.id, depth + 1));
     };
     dfs(root, 0);
-
     const currentLabel = `T(${step.currentState.eggs},${step.currentState.floors})`;
     const matched = ordered.filter((n) => n.label === currentLabel);
     const focusCandidate = matched.length > 0 ? matched[matched.length - 1] : undefined;
     const focusId = focusCandidate?.id ?? (ordered.length > 0 ? ordered[ordered.length - 1].id : root);
-
     const focusPath = new Set<string>();
     let walk = focusId;
     while (walk) {
       focusPath.add(walk);
       walk = parent.get(walk) ?? '';
     }
-
     const pos = new Map<string, { x: number; y: number }>();
     const sparseMode = ordered.length > 28;
     const xGap = sparseMode ? 170 : 190;
@@ -70,12 +63,9 @@ export default function BruteForceTree({ step }: { step: Step }) {
     const leftPad = 80;
     const topPad = 28;
     ordered.forEach((n) => pos.set(n.id, { x: leftPad + n.depth * xGap, y: topPad + n.yOrder * yGap }));
-
     const width = Math.max(880, ...ordered.map((n) => leftPad + n.depth * xGap + 220));
-    const height = Math.max(360, ...ordered.map((n) => topPad + n.yOrder * yGap + 90));
-
+    const height = Math.max(520, ...ordered.map((n) => topPad + n.yOrder * yGap + 100));
     const focusPos = pos.get(focusId);
-
     return { ordered, pos, focusPath, focusId, width, height, focusPos, sparseMode };
   }, [nodes, edges, step.currentState.eggs, step.currentState.floors]);
 
@@ -94,9 +84,7 @@ export default function BruteForceTree({ step }: { step: Step }) {
     graph.ordered.forEach((n) => {
       if (graph.focusPath.has(n.id) || n.id === graph.focusId || n.state === 'active') visibleNodeIds.add(n.id);
     });
-    if (visibleNodeIds.size < 14) {
-      graph.ordered.slice(-18).forEach((n) => visibleNodeIds.add(n.id));
-    }
+    if (visibleNodeIds.size < 14) graph.ordered.slice(-18).forEach((n) => visibleNodeIds.add(n.id));
   } else {
     graph.ordered.forEach((n) => visibleNodeIds.add(n.id));
   }
@@ -104,7 +92,7 @@ export default function BruteForceTree({ step }: { step: Step }) {
   return (
     <div>
       <div className="flex items-center justify-between mb-2">
-        <div className="text-sm soft-sub">递归树（自动聚焦当前节点）</div>
+        <div className="text-sm font-semibold soft-title">递归树（自动聚焦当前节点）</div>
         <div className="flex items-center gap-1">
           <button className="soft-blue px-2 py-1 rounded border text-xs" onClick={() => setZoom((z) => Math.max(0.75, +(z - 0.1).toFixed(2)))}><Minus size={12} /></button>
           <span className="text-xs soft-sub w-10 text-center">{Math.round(zoom * 100)}%</span>
@@ -113,7 +101,7 @@ export default function BruteForceTree({ step }: { step: Step }) {
         </div>
       </div>
 
-      <div ref={viewportRef} className="warm-subcard p-2 overflow-auto h-[300px]">
+      <div ref={viewportRef} className="warm-subcard p-2 overflow-auto h-[420px]">
         <svg width={graph.width * zoom} height={graph.height * zoom}>
           <g transform={`scale(${zoom})`}>
             {edges.map((e, i) => {
@@ -128,12 +116,7 @@ export default function BruteForceTree({ step }: { step: Step }) {
               return (
                 <g key={`${e.from}-${e.to}-${i}`} opacity={onPath ? 0.98 : 0.24}>
                   <path d={path} fill="none" stroke={onPath ? '#7c6f98' : '#cfc9de'} strokeWidth={onPath ? 2.2 : 1.6} />
-                  {onPath && (
-                    <>
-                      <rect x={midX - 22} y={midY - 8} width={44} height={16} rx={8} fill={e.label === 'broken' ? '#fce7f3' : '#e8f2ff'} stroke={e.label === 'broken' ? '#f5cfe4' : '#cfe0ff'} />
-                      <text x={midX} y={midY + 3} fontSize="9" textAnchor="middle" fill="#5f4c95">{e.label}</text>
-                    </>
-                  )}
+                  {onPath && <><rect x={midX - 22} y={midY - 8} width={44} height={16} rx={8} fill={e.label === 'broken' ? '#fce7f3' : '#e8f2ff'} stroke={e.label === 'broken' ? '#f5cfe4' : '#cfe0ff'} /><text x={midX} y={midY + 3} fontSize="9" textAnchor="middle" fill="#5f4c95">{e.label}</text></>}
                 </g>
               );
             })}
@@ -148,12 +131,7 @@ export default function BruteForceTree({ step }: { step: Step }) {
                 <motion.g key={n.id} initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: onPath ? 1 : 0.48, scale: isFocus ? 1.05 : 1 }} transition={{ duration: 0.2 }}>
                   <rect x={p.x - 60} y={p.y - 20} width={120} height={40} rx={11} fill={style.fill} stroke={style.stroke} strokeWidth={isFocus ? 2.4 : 1.3} style={isFocus ? { filter: 'drop-shadow(0 0 8px rgba(147, 51, 234, 0.24))' } : {}} />
                   <text x={p.x} y={p.y + 3} textAnchor="middle" fontSize="12" fill="#43385a" fontWeight={600}>{n.label}</text>
-                  {n.state === 'repeat' && (
-                    <g>
-                      <rect x={p.x + 26} y={p.y - 28} width={30} height={13} rx={6.5} fill="#f9a8d4" />
-                      <text x={p.x + 41} y={p.y - 19} textAnchor="middle" fontSize="8" fill="#5f4c95">重复</text>
-                    </g>
-                  )}
+                  {n.state === 'repeat' && <g><rect x={p.x + 26} y={p.y - 28} width={30} height={13} rx={6.5} fill="#f9a8d4" /><text x={p.x + 41} y={p.y - 19} textAnchor="middle" fontSize="8" fill="#5f4c95">重复</text></g>}
                 </motion.g>
               );
             })}

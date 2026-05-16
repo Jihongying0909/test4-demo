@@ -5,13 +5,20 @@ export default function BottomUpTableView({ step, tab, setTab }: { step: Step; t
 
   return (
     <div>
+      <div className="text-sm font-semibold soft-title mb-2">动态规划可视化面板</div>
+      <div className="warm-subcard p-3 mb-3 text-xs text-[#5a5075] leading-6">
+        <div className="font-mono">dp[e][f] = min( 1 + max(dp[e-1][x-1], dp[e][f-x]) )</div>
+        <div className="font-mono mt-1">reach[k] = reach[k] + reach[k-1] + 1</div>
+        <div className="mt-1">当前状态：e={step.currentState.eggs}, f={step.currentState.floors}, x={step.x ?? '-'}</div>
+      </div>
+
       <div className="mb-3">
-        <button onClick={() => setTab('table')} className={`px-3 py-1 rounded-xl mr-2 border ${tab === 'table' ? 'bg-[#FCE7C8] border-[#D97706] text-[#7B4C2C]' : 'bg-[#FFF8F0] border-[#E7D9C8] text-[#7C6A5D]'}`}>二维 DP 表</button>
-        <button onClick={() => setTab('reach')} className={`px-3 py-1 rounded-xl border ${tab === 'reach' ? 'bg-[#FCE7C8] border-[#D97706] text-[#7B4C2C]' : 'bg-[#FFF8F0] border-[#E7D9C8] text-[#7C6A5D]'}`}>一维 Reach</button>
+        <button onClick={() => setTab('table')} className={`px-3 py-1 rounded-xl mr-2 border ${tab === 'table' ? 'soft-purple' : 'bg-[#FFF8F0] border-[#E7D9C8] text-[#7C6A5D]'}`}>二维 DP 表</button>
+        <button onClick={() => setTab('reach')} className={`px-3 py-1 rounded-xl border ${tab === 'reach' ? 'soft-blue' : 'bg-[#FFF8F0] border-[#E7D9C8] text-[#7C6A5D]'}`}>一维 Reach</button>
       </div>
 
       {tab === 'table' ? (
-        <div className="overflow-auto max-h-[430px] warm-subcard p-2">
+        <div className="overflow-auto max-h-[440px] warm-subcard p-2">
           <table className="text-xs border-collapse">
             <tbody>
               {dp.map((r, i) => (
@@ -23,13 +30,13 @@ export default function BottomUpTableView({ step, tab, setTab }: { step: Step; t
                     return (
                       <td
                         key={j}
-                        className={`border px-2 py-1 transition-colors duration-300 ${
+                        className={`border px-2 py-1 transition-colors duration-300 min-w-8 text-center ${
                           isCurrent
-                            ? 'bg-[#FCE7C8] border-[#D97706]'
+                            ? 'bg-[#fce7f3] border-[#f5cfe4] font-semibold'
                             : isDepA
-                              ? 'bg-[#FDE6CD] border-[#EAB37A]'
+                              ? 'bg-[#efe9ff] border-[#ddd0ff]'
                               : isDepB
-                                ? 'bg-[#EFF7EC] border-[#8DAA91]'
+                                ? 'bg-[#e8f2ff] border-[#cfe0ff]'
                                 : 'bg-[#FFFDF9] border-[#E7D9C8]'
                         }`}
                       >
@@ -43,7 +50,7 @@ export default function BottomUpTableView({ step, tab, setTab }: { step: Step; t
           </table>
         </div>
       ) : (
-        <div className="text-sm text-[#7C6A5D] warm-subcard p-4">切换到算法“一维优化 Reach”可查看动态数组更新。</div>
+        <div className="text-sm text-[#7C6A5D] warm-subcard p-4">切换到算法“一维优化 Reach”可查看数组逐轮实时更新。</div>
       )}
     </div>
   );

@@ -19,18 +19,20 @@ function FormulaCard({ step }: { step: Step }) {
 }
 
 function BranchCompare({ step }: { step: Step }) {
-  if (step.x === undefined) return null;
   const k = step.currentState.eggs;
   const n = step.currentState.floors;
+  const hasX = step.x !== undefined;
+  const x = step.x ?? 1;
+
   return (
     <div className="grid grid-cols-2 gap-2 mb-2 text-xs">
-      <div className="p-2 rounded-lg border bg-[#FDE6CD] border-[#E5B176]">
+      <div className={`p-2 rounded-lg border transition-all ${hasX ? 'bg-[#FDE6CD] border-[#E5B176]' : 'bg-[#f5f2fa] border-[#ddd6f4] text-[#9a93b1]'}`}>
         <div className="font-semibold">鸡蛋破碎</div>
-        <div>转到 ({k - 1}, {step.x - 1})</div>
+        <div>转到 ({hasX ? k - 1 : '-'}, {hasX ? x - 1 : '-'})</div>
       </div>
-      <div className="p-2 rounded-lg border bg-[#EAF4EA] border-[#9FBCA3]">
+      <div className={`p-2 rounded-lg border transition-all ${hasX ? 'bg-[#EAF4EA] border-[#9FBCA3]' : 'bg-[#f5f2fa] border-[#ddd6f4] text-[#9a93b1]'}`}>
         <div className="font-semibold">鸡蛋未碎</div>
-        <div>转到 ({k}, {Math.max(0, n - step.x)})</div>
+        <div>转到 ({hasX ? k : '-'}, {hasX ? Math.max(0, n - x) : '-'})</div>
       </div>
     </div>
   );
@@ -38,24 +40,31 @@ function BranchCompare({ step }: { step: Step }) {
 
 function FloorRangeBar({ step, totalFloors }: { step: Step; totalFloors: number }) {
   const x = step.x;
-  if (!x || totalFloors <= 0) return null;
+  const hasX = x !== undefined;
 
   return (
     <div className="warm-subcard p-3 mb-2">
       <div className="text-xs text-[#7C6A5D] mb-2">楼层搜索区间示意</div>
-      <div className="grid gap-1" style={{ gridTemplateColumns: `repeat(${totalFloors}, minmax(14px, 1fr))` }}>
-        {Array.from({ length: totalFloors }, (_, i) => i + 1).map((f) => {
-          const cls = f === x
-            ? 'bg-[#F59E0B] text-white border-[#D97706]'
-            : f < x
-              ? 'bg-[#FDE6CD] border-[#E5B176] text-[#7B4C2C]'
-              : f > x
-                ? 'bg-[#EAF4EA] border-[#9FBCA3] text-[#4F6D56]'
-                : 'bg-[#EEE6DD] border-[#D8C9B8]';
-          return <div key={f} className={`h-6 text-[10px] rounded border flex items-center justify-center ${cls}`}>{f}</div>;
+      <div className="grid gap-1" style={{ gridTemplateColumns: `repeat(${Math.max(1, totalFloors)}, minmax(14px, 1fr))` }}>
+        {Array.from({ length: Math.max(1, totalFloors) }, (_, i) => i + 1).map((f) => {
+          const cls = !hasX
+            ? 'bg-[#f5f2fa] border-[#ddd6f4] text-[#9a93b1]'
+            : f === x
+              ? 'bg-[#F59E0B] text-white border-[#D97706]'
+              : f < x!
+                ? 'bg-[#FDE6CD] border-[#E5B176] text-[#7B4C2C]'
+                : 'bg-[#EAF4EA] border-[#9FBCA3] text-[#4F6D56]';
+
+          return (
+            <div key={f} className={`h-6 text-[10px] rounded border flex items-center justify-center transition-all ${cls}`}>
+              {f}
+            </div>
+          );
         })}
       </div>
-      <div className="mt-1 text-[10px] text-[#7C6A5D]">x={x}，左侧为碎后区间，右侧为未碎后区间。</div>
+      <div className="mt-1 text-[10px] text-[#7C6A5D]">
+        {hasX ? `x=${x}，左侧为碎后区间，右侧为未碎后区间。` : '当前步骤未枚举 x，区间示意保持常驻（未高亮）。'}
+      </div>
     </div>
   );
 }
