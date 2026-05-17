@@ -21,6 +21,39 @@ const limits = {
   reach: { k: 8, n: 200 },
 };
 
+function ResultPanel({ step, status, total, currentIndex }: { step?: Step; status: string; total: number; currentIndex: number }) {
+  if (!step) {
+    return <div className="warm-subcard p-4 text-sm text-[#6f628f]">点击 Start 后显示实时结果。</div>;
+  }
+
+  const bestTrials = step.best ?? step.returnValue ?? '-';
+  const firstFloor = step.bestFloor ?? '-';
+  const isFinished = status === 'Finished' || (total > 0 && currentIndex === total - 1);
+
+  return (
+    <div className="warm-subcard p-4 text-sm">
+      <div className="text-lg font-semibold soft-title mb-2">最终结果（实时更新）</div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+        <div className="warm-subcard p-3">
+          <div className="text-xs soft-sub">当前最优试验次数</div>
+          <div className="text-xl font-semibold text-[#3f4f8a]">{bestTrials}</div>
+        </div>
+        <div className="warm-subcard p-3">
+          <div className="text-xs soft-sub">当前最优首投楼层</div>
+          <div className="text-xl font-semibold text-[#7a4a69]">{firstFloor}</div>
+        </div>
+        <div className="warm-subcard p-3">
+          <div className="text-xs soft-sub">进度状态</div>
+          <div className="text-xl font-semibold text-[#5c4f78]">{isFinished ? '已完成' : '求解中'}</div>
+        </div>
+      </div>
+      <div className="mt-3 text-xs text-[#6f628f]">
+        {isFinished ? `最终解：最少次数 ${bestTrials}，首投楼层 ${firstFloor}。` : `当前在第 ${currentIndex + 1}/${total} 步，结果会继续更新。`}
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const [k, setK] = useState(2);
   const [n, setN] = useState(6);
@@ -29,7 +62,7 @@ export default function App() {
   const [idx, setIdx] = useState(0);
   const [status, setStatus] = useState<'Ready' | 'Running' | 'Paused' | 'Finished'>('Ready');
   const [tab, setTab] = useState<'table' | 'reach'>('table');
-  const [bottomTab, setBottomTab] = useState<'explain' | 'log' | 'complexity'>('explain');
+  const [bottomTab, setBottomTab] = useState<'explain' | 'log' | 'complexity' | 'result'>('explain');
   const [allCompare, setAllCompare] = useState<{ brute?: Step[]; top?: Step[]; bottom?: Step[] }>({});
 
   const current = steps[idx];
@@ -67,7 +100,6 @@ export default function App() {
     setIdx(0);
     setStatus('Ready');
 
-    // Compare data is expensive; compute only after Start to avoid UI freezing while typing.
     setTimeout(() => {
       setAllCompare({
         brute: generateBruteForceSteps(Math.min(k, 4), Math.min(n, 8)),
@@ -116,20 +148,22 @@ export default function App() {
 
       <div className="warm-card mt-4 p-4 w-full relative">
         <div className="text-lg font-semibold soft-title mb-3">步骤信息</div>
-        <div className="flex items-center gap-2 mb-3">
+        <div className="flex items-center gap-2 mb-3 flex-wrap">
           <button onClick={() => setBottomTab('explain')} className={`px-3 py-1.5 text-sm rounded-xl border ${bottomTab === 'explain' ? 'soft-purple' : 'bg-[#fcfbff] border-[#e9e4f8]'}`}>当前解释</button>
           <button onClick={() => setBottomTab('log')} className={`px-3 py-1.5 text-sm rounded-xl border ${bottomTab === 'log' ? 'soft-blue' : 'bg-[#fcfbff] border-[#e9e4f8]'}`}>运行日志</button>
           <button onClick={() => setBottomTab('complexity')} className={`px-3 py-1.5 text-sm rounded-xl border ${bottomTab === 'complexity' ? 'soft-pink' : 'bg-[#fcfbff] border-[#e9e4f8]'}`}>复杂度说明</button>
+          <button onClick={() => setBottomTab('result')} className={`px-3 py-1.5 text-sm rounded-xl border ${bottomTab === 'result' ? 'soft-blue' : 'bg-[#fcfbff] border-[#e9e4f8]'}`}>最终结果</button>
         </div>
 
         {bottomTab === 'explain' && <StepExplanation step={current} />}
         {bottomTab === 'log' && <ExecutionLog logs={current?.logs} />}
+        {bottomTab === 'result' && <ResultPanel step={current} status={status} total={steps.length} currentIndex={idx} />}
         {bottomTab === 'complexity' && (
           <div className="warm-subcard p-4 text-sm leading-7 text-[#5c5077]">
             <div>蛮力法时间复杂度约为 O(N^(K-2) * 2^N)。</div>
             <div>自顶向下 DP：时间 O(KN²)，空间 O(KN)。</div>
             <div>自底向上 DP：时间 O(KN²)，空间 O(KN)。</div>
-            <div>一维优化思想：reach[k] = reach[k] + reach[k-1] + 1。</div>
+            <div>一维优化：reach[k] = reach[k] + reach[k-1] + 1。</div>
           </div>
         )}
       </div>
@@ -145,3 +179,4 @@ export default function App() {
     </div>
   );
 }
+
