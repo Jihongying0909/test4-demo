@@ -12,15 +12,15 @@ function metric(step?: Step) {
 
 function formulaByAlgo(algorithm: AlgoType) {
   if (algorithm === 'bottomup') {
-    return 'dp[e][f] = min_{1 <= x <= f} (1 + max(dp[e-1][x-1], dp[e][f-x]))';
+    return 'dp[e][f] = min_{1 <= x <= f}(1 + max(dp[e-1][x-1], dp[e][f-x]))';
   }
   if (algorithm === 'topdown') {
-    return 'T(K,N) = min_{1 <= x <= N} (1 + max(T(K-1,x-1), T(K,N-x))) + memo';
+    return 'T(K,N) = min_{1 <= x <= N}(1 + max(T(K-1,x-1), T(K,N-x))) + memo';
   }
   if (algorithm === 'reach') {
     return 'reach[k] = reach[k] + reach[k-1] + 1';
   }
-  return 'T(K,N) = min_{1 <= x <= N} (1 + max(T(K-1,x-1), T(K,N-x)))';
+  return 'T(K,N) = min_{1 <= x <= N}(1 + max(T(K-1,x-1), T(K,N-x)))';
 }
 
 export default function TeachingContent({ step, algorithm }: { step?: Step; algorithm: AlgoType }) {
@@ -78,7 +78,7 @@ export default function TeachingContent({ step, algorithm }: { step?: Step; algo
           </div>
           <div className="warm-subcard p-2">
             <div className="font-semibold">自底向上 DP</div>
-            <div>二维表填表，从小问题推大问题。</div>
+            <div>二维填表，从小问题推到大问题。</div>
             <span className="inline-block mt-1 px-2 py-0.5 rounded soft-purple border">O(KN²)</span>
           </div>
         </div>
@@ -102,8 +102,8 @@ export default function TeachingContent({ step, algorithm }: { step?: Step; algo
         </div>
         <div className="text-sm leading-7 text-[#5a5075]">
           <div>{'蛮力法：E <= 12, F <= 16'}</div>
-          <div>{'自顶向下 DP：E <= 12, F <= 994'}</div>
-          <div>{'自底向上 DP：E <= 12, F <= 3039'}</div>
+          <div>{'自顶向下 DP：E <= 12, F <= 1743'}</div>
+          <div>{'自底向上 DP：E <= 12, F <= 2767'}</div>
           <div className="mt-1 soft-sub">{'条件：单组时间阈值 10 秒，F 搜索上限 5000。'}</div>
         </div>
       </div>
@@ -112,7 +112,7 @@ export default function TeachingContent({ step, algorithm }: { step?: Step; algo
         <div className="soft-title text-lg font-semibold mb-2">学习小结</div>
         <ul className="text-sm leading-7 text-[#5a5075] list-disc pl-4">
           <li>蛮力法重复子问题严重。</li>
-          <li>自顶向下 DP 用缓存显著减少重复计算。</li>
+          <li>自顶向下 DP 利用缓存显著减少重复计算。</li>
           <li>自底向上 DP 通过填表使每个状态只计算一次。</li>
           <li>三种算法结果一致，但效率差异明显。</li>
         </ul>
@@ -120,3 +120,4 @@ export default function TeachingContent({ step, algorithm }: { step?: Step; algo
     </div>
   );
 }
+

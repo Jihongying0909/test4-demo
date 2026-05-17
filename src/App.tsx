@@ -15,9 +15,9 @@ import { Step } from './types';
 import { generateBottomUpSteps, generateBruteForceSteps, generateReachDpSteps, generateTopDownSteps } from './utils/stepGenerators';
 
 const limits = {
-  bruteforce: { k: 4, n: 8 },
-  topdown: { k: 6, n: 15 },
-  bottomup: { k: 8, n: 20 },
+  bruteforce: { k: 12, n: 16 },
+  topdown: { k: 12, n: 1743 },
+  bottomup: { k: 12, n: 2767 },
   reach: { k: 8, n: 200 },
 };
 
@@ -102,9 +102,9 @@ export default function App() {
 
     setTimeout(() => {
       setAllCompare({
-        brute: generateBruteForceSteps(Math.min(k, 4), Math.min(n, 8)),
-        top: generateTopDownSteps(Math.min(k, 6), Math.min(n, 15)),
-        bottom: generateBottomUpSteps(Math.min(k, 8), Math.min(n, 20)),
+        brute: generateBruteForceSteps(Math.min(k, 12), Math.min(n, 16)),
+        top: generateTopDownSteps(Math.min(k, 12), Math.min(n, 1743)),
+        bottom: generateBottomUpSteps(Math.min(k, 12), Math.min(n, 2767)),
       });
     }, 0);
   };
@@ -179,4 +179,3 @@ export default function App() {
     </div>
   );
 }
-
