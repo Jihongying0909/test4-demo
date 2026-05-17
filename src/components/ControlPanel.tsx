@@ -36,7 +36,7 @@ export default function ControlPanel(p: Props) {
       <div className="rounded-3xl p-6 border border-[#e9e4f8] shadow-[0_10px_24px_rgba(114,102,158,0.15)] bg-gradient-to-r from-[#7c5cf0] via-[#a855f7] to-[#f472b6] text-white">
         <div className="inline-flex px-3 py-1 rounded-full border border-white/35 text-xs tracking-wide mb-4 bg-white/10">ALGORITHM DASHBOARD</div>
         <h1 className="text-4xl font-bold leading-tight">鸡蛋掉落问题算法可视化平台</h1>
-        <p className="text-white/85 mt-2 text-sm">浅色教学演示：伪代码、递归树、DP 表与状态联动</p>
+        <p className="text-white/85 mt-2 text-sm">伪代码、递归树、DP 表与状态联动</p>
       </div>
 
       <div className="warm-card rounded-3xl p-4">
